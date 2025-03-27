@@ -41,6 +41,7 @@ nav button {
   background-color: #101010;
   border: none;
   transition: all 0.3s ease;
+  font-size: 1.5rem;
 }
 
 nav button:hover {
@@ -63,9 +64,24 @@ nav a.inactive-link {
   /*--color: #C4C4C6; /* Default gray for inactive links */*/
 }
 
+nav a:focus {
+  outline: none !important;
+}
+
+nav a.active-link:focus,
+nav a.inactive-link:focus {
+  outline: none !important;
+}
+
 nav a .svg-inline--fa {
   font-size: 1.5rem; /* Icon size */
   color: currentColor; /* Inherit color from parent */
+}
+
+.overlay {
+  position: absolute;
+  top: 0rem;
+  left: 0rem;
 }
 
 nav a[href="/"] { --color: #FCEAAC; } /* Home - Soft yellow */
