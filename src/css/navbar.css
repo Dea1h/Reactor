@@ -13,23 +13,6 @@ nav {
   gap: 2rem;
 }
 
-nav button {
-  --blur: 1.75rem;
-  --box-blur: calc(0.5 * var(--blur));
-  --glow: var(--color);
-  --size: 4rem;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--size);
-  height: var(--size);
-  color: var(--color, white);
-  text-decoration: none;
-  font-family: system-ui, sans-serif;
-  transition: all 0.3s ease;
-}
-
 nav a {
   --blur: 1.75rem;
   --box-blur: calc(0.5 * var(--blur));
@@ -45,6 +28,24 @@ nav a {
   text-decoration: none;
   font-family: system-ui, sans-serif;
   transition: all 0.3s ease;
+  cursor: pointer;
+  outline: none;
+}
+
+nav {
+  outline: none;
+}
+
+nav button {
+  color: #B7E7F7;
+  background-color: #101010;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+nav button:hover {
+  filter: brightness(120%);
+  transform: scale(1.5);
 }
 
 nav a:hover {
@@ -55,18 +56,16 @@ nav a:hover {
 /* Active Link Style */
 nav a.active-link {
   --color: #FDA802; /* Neon orange for active link */
-  filter: brightness(110%);
 }
 
 /* Inactive Link Style */
 nav a.inactive-link {
-  --color: #C4C4C6; /* Default gray for inactive links */
+  /*--color: #C4C4C6; /* Default gray for inactive links */*/
 }
 
 nav a .svg-inline--fa {
   font-size: 1.5rem; /* Icon size */
   color: currentColor; /* Inherit color from parent */
-  text-shadow: 0 0 var(--blur) var(--glow); /* Glow effect */
 }
 
 nav a[href="/"] { --color: #FCEAAC; } /* Home - Soft yellow */
