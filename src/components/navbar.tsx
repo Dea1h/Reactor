@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faMagnifyingGlass, faCartShopping,faBars } from '@fortawesome/free-solid-svg-icons';
 import '../css/navbar.css';
-import Overlay from './overlay.tsx'
+import Overlay from './overlay'
 
 function Navbar() {
   const [toggle,setToggle] = useState(false);
   const handleToggle = () => {
-    setToggle(true);
+    setToggle((prev) => !prev);
   };
 
   return (
@@ -27,7 +27,7 @@ function Navbar() {
           <FontAwesomeIcon icon={faBars} />
         </NavLink>
       </nav>
-      { toggle && <Overlay className="overlay"/>}
+      { toggle && <Overlay className="overlay" handleToggle={handleToggle} />}
     </>
   )
 }
