@@ -14,13 +14,20 @@ function Overlay(data: overlay_data) {
   const navigate = useNavigate();
   const handleSearch = async () => {
     try {
-      const url = `https://localhost:5173/search?para=${query}`;
+      const url = `http://192.168.1.76:8080/search?para=${query}`;
+      
       const response = await fetch(url, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
       });
-      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+      }
+
+      const responseData =  await response.json();
       data.handleToggle();
+      
       navigate('/shop', {state: {searchData: responseData }});
     } catch (error) {
       throw error;
@@ -33,10 +40,12 @@ function Overlay(data: overlay_data) {
           <button onClick={data.handleToggle} className="Xmark">
             <FontAwesomeIcon icon={faXmark} />
           </button>
+          <form onSubmit={handleSearch}>
           <input placeholder="Search" value={query} onChange={(event) => setQuery(event.target.value)} className="navbar_search" />
-          <button className="magnify" onClick={handleSearch}>
+          <button className="magnify" >
             <FontAwesomeIcon icon={faMagnifyingGlass} />
           </button>
+          </form>
         </div>
       </div>
     </React.Fragment>

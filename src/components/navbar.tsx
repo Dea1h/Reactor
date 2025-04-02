@@ -23,7 +23,7 @@ function Navbar() {
         <NavLink to='/' className={({ isActive }) => (isActive ? 'active-link' : 'inactive-link')}>
           <FontAwesomeIcon icon={faCartShopping} />
         </NavLink>
-        <NavLink to='/' className={({ isActive }) => (isActive ? 'active-link' : 'inactive-link')}>
+        <NavLink to='/shop' className={({ isActive }) => (isActive ? 'active-link' : 'inactive-link')}>
           <FontAwesomeIcon icon={faBars} />
         </NavLink>
       </nav>

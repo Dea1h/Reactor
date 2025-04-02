@@ -6,6 +6,7 @@
   flex-direction: column;
   gap: 1rem;
   align-items: center;
+  z-index: 1001;
 }
 
 .overlay.data {
@@ -30,10 +31,16 @@ button {
   left: 87%;
 }
 
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 input {
   border-radius: 1rem;
   padding: 0.4rem;
   width: 90%;
   color: black;
-  user-select: none;
 }

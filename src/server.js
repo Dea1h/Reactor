@@ -1,18 +1,19 @@
-import express from 'express';
-import mysql from 'mysql2/promise';
-import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
-import { fileURLToPath } from 'url';
+import express from "express";
+import mysql from "mysql2/promise";
+import multer from "multer";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
+import { log } from "console";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-async function initializeDatabase(database,pool) {
+async function initializeDatabase(database, pool) {
   try {
     const [rows] = await pool.query(`SHOW DATABASES LIKE '${database}';`);
 
-    if(rows.length == 0) {
-      console.log('Database doesnt exist! Creating database...');
+    if (rows.length == 0) {
+      console.log("Database doesnt exist! Creating database...");
 
       const query = `
       CREATE DATABASE IF NOT EXISTS ${database};
@@ -38,7 +39,7 @@ async function initializeDatabase(database,pool) {
         FOREIGN KEY (product_id) REFERENCES products(product_id)
       );`;
       await pool.query(query);
-      console.log('Database Created.');
+      console.log("Database Created.");
     }
   } catch (error) {
     console.error(error);
@@ -46,7 +47,7 @@ async function initializeDatabase(database,pool) {
   }
 }
 
-async function insertProductByParameter(database,pool,postParameter) {
+async function insertProductByParameter(database, pool, postParameter) {
   try {
     const query = `
     USE ${database};
@@ -60,7 +61,7 @@ async function insertProductByParameter(database,pool,postParameter) {
       priority
     ) VALUES (?, ?, ?, ?, ?, ?, ?);`;
 
-    await pool.query(query,[
+    await pool.query(query, [
       postParameter.product_id || null,
       postParameter.type || null,
       postParameter.price || null,
@@ -71,7 +72,7 @@ async function insertProductByParameter(database,pool,postParameter) {
     ]);
   } catch (error) {
     console.error(error);
-    throw new Error('Error Inserting Data Into Database');
+    throw new Error("Error Inserting Data Into Database");
   }
 
   try {
@@ -86,7 +87,7 @@ async function insertProductByParameter(database,pool,postParameter) {
       design,
       size
     ) VALUES (?, ?, ?, ?, ?, ?, ?);`;
-    await pool.query(query,[
+    await pool.query(query, [
       postParameter.variation_id || null,
       postParameter.product_id || null,
       postParameter.quantity || null,
@@ -97,20 +98,22 @@ async function insertProductByParameter(database,pool,postParameter) {
     ]);
   } catch (error) {
     console.error(error);
-    throw new Error('Error Inserting Data Into Database');
+    throw new Error("Error Inserting Data Into Database");
   }
 }
 
-function fetchParameter({ image_Id = null,  
-                          type = null,
-                          max_price = null,
-                          min_price = null,
-                          colour = null,
-                          max_age = null,
-                          min_age = null,
-                          collection = null,
-                          priority = null,
-                          quantity = null}) {
+function fetchParameter({
+  image_Id = null,
+  type = null,
+  max_price = null,
+  min_price = null,
+  colour = null,
+  max_age = null,
+  min_age = null,
+  collection = null,
+  priority = null,
+  quantity = null,
+}) {
   this.image_Id = image_Id;
   this.type = type;
   this.max_price = max_price;
@@ -122,67 +125,74 @@ function fetchParameter({ image_Id = null,
   this.priority = priority;
 }
 
-function postParameter ({ product_id = null,
-                          type = null,
-                          price = null,
-                          min_age = null,
-                          max_age = null,
-                          collection = null,
-                          priority = null,
-                          variation_id = null,
-                          quantity = null,
-                          model_image_id = null,
-                          colour = null,
-                          design = null}) {
-  this.product_id = product_id,
-  this.type = type,
-  this.price = price,
-  this.min_age = min_age,
-  this.max_age = max_age,
-  this.collection = collection,
-  this.priority = priority,
-  this.variation_id = variation_id,
-  this.quantity = quantity,
-  this.model_image_id = model_image_id,
-  this.colour = colour,
-  this.design = design
+function postParameter({
+  product_id = null,
+  type = null,
+  price = null,
+  min_age = null,
+  max_age = null,
+  collection = null,
+  priority = null,
+  variation_id = null,
+  quantity = null,
+  model_image_id = null,
+  colour = null,
+  design = null,
+}) {
+  (this.product_id = product_id),
+    (this.type = type),
+    (this.price = price),
+    (this.min_age = min_age),
+    (this.max_age = max_age),
+    (this.collection = collection),
+    (this.priority = priority),
+    (this.variation_id = variation_id),
+    (this.quantity = quantity),
+    (this.model_image_id = model_image_id),
+    (this.colour = colour),
+    (this.design = design);
 }
 
-function filehandler(multer,fs,path) {
+function filehandler(multer, fs, path) {
   //Directory to store images;
-  const UPLOAD_DIR = '../public/images';
-  
+  const UPLOAD_DIR = "../public/images";
+
   //Check if upload directory exists
-  fs.mkdirSync(UPLOAD_DIR,{recursive: true});
+  fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 
   const storage = multer.diskStorage({
     destination: UPLOAD_DIR,
-    filename: (request,file,callback) => {
-      callback(null,file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+    filename: (request, file, callback) => {
+      callback(
+        null,
+        file.fieldname + "-" + Date.now() + path.extname(file.originalname),
+      );
     },
   });
 
   // Initialize upload variable
   const upload = multer({
     storage: storage,
-    limits: { fileSize: 10 * 1024 * 1024 },  // Max file size: 10MB
+    limits: { fileSize: 10 * 1024 * 1024 }, // Max file size: 10MB
     fileFilter: (req, file, callback) => {
-      const fileTypes = /jpeg|jpg|png/;  // Allowed file extensions
-      const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
+      const fileTypes = /jpeg|jpg|png/; // Allowed file extensions
+      const extname = fileTypes.test(
+        path.extname(file.originalname).toLowerCase(),
+      );
       const mimetype = fileTypes.test(file.mimetype);
 
       if (mimetype && extname) {
         return callback(null, true);
       } else {
-        callback('Error: Images Only!');
+        callback("Error: Images Only!");
       }
-    }
+    },
   });
 
   return upload;
 }
 
-async function fetchData(database,fetchParameter,pool) {
+async function fetchData(database, fetchParameter, pool) {
   const whereClause = ` 
                       SELECT 
                           p.type, p.price, p.min_age, p.max_age, p.collection, 
@@ -205,7 +215,7 @@ async function fetchData(database,fetchParameter,pool) {
 
   try {
     await pool.query(`USE ${database};`);
-    const [rows,fields] = await pool.query(whereClause,[
+    const [rows, fields] = await pool.query(whereClause, [
       fetchParameter.type,
       fetchParameter.max_price,
       fetchParameter.min_price,
@@ -219,11 +229,53 @@ async function fetchData(database,fetchParameter,pool) {
     return rows;
   } catch (error) {
     console.error(error);
-    throw new Error('Error Fetching Data From Database');
+    throw new Error("Error Fetching Data From Database");
   }
 }
 
-async function subQuery(database,pool,model_image_id) {
+async function fetchDataTest(database, fetchParameter, pool) {
+  const whereClause = ` 
+                      SELECT 
+                          p.type, p.price, p.min_age, p.max_age, p.collection, 
+                          pv.model_image_id, pv.colour, pv.design, pv.quantity
+                      FROM 
+                          products p
+                      JOIN 
+                          product_variations pv ON p.product_id = pv.product_id
+                      WHERE 
+                          LOWER(REPLACE(REPLACE(p.type,'-',''),' ','')) LIKE COALESCE(?,LOWER(REPLACE(REPLACE(p.type,'-',''),' ','')))
+                          AND p.price <= COALESCE(?, p.price)
+                          AND p.price >= COALESCE(?, p.price)
+                          AND p.min_age >= COALESCE(?, p.min_age)
+                          AND p.max_age <= COALESCE(?, p.max_age)
+                          AND p.collection = COALESCE(?, p.collection)
+                          AND p.priority = COALESCE(?, p.priority)
+                          AND pv.model_image_id = COALESCE(?, pv.model_image_id)
+                          AND pv.colour = COALESCE(?, pv.colour);
+                        `;
+
+  try {
+    console.log(whereClause);
+    await pool.query(`USE ${database};`);
+    const [rows, fields] = await pool.query(whereClause, [
+      fetchParameter.type,
+      fetchParameter.max_price,
+      fetchParameter.min_price,
+      fetchParameter.min_age,
+      fetchParameter.max_age,
+      fetchParameter.collection,
+      fetchParameter.priority,
+      fetchParameter.image_Id,
+      fetchParameter.colour,
+    ]);
+    return rows;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Error Fetching Data From Database");
+  }
+}
+
+async function subQuery(database, pool, model_image_id) {
   let query = `
                       SELECT 
                           p.type,
@@ -249,7 +301,7 @@ async function subQuery(database,pool,model_image_id) {
                     `;
   try {
     await pool.query(`USE ${database};`);
-    const [rows,fields] = await pool.query(query,[model_image_id]);
+    const [rows, fields] = await pool.query(query, [model_image_id]);
     return rows;
   } catch (error) {
     throw new Error(`Error Subquery.`);
@@ -312,21 +364,34 @@ async function subQuery(database,pool,model_image_id) {
 //  return endpoint;
 //}
 
-function endpoints(express,pool,upload,database) {
+function endpoints(express, pool, upload, database) {
   const endpoint = express.Router();
 
-  endpoint.get('/',async (req,res) => {
-    const indexHTML = (path.join(__dirname,'index.html'));
-    const parameter = new fetchParameter({priority: 0});
-    const home_imageList = await fetchData(database,parameter,pool);
+  endpoint.get("/", async (req, res) => {
+    const indexHTML = path.join(__dirname, "index.html");
+    const parameter = new fetchParameter({ priority: 0 });
+    const home_imageList = await fetchData(database, parameter, pool);
     const shop_imageList = home_imageList;
     res.sendFile(indexHTML);
-  })
+  });
 
-  endpoint.get('/search',async (req,res) => {
-    const data = req.query.para;
+  endpoint.get("/search", async (req, res) => {
+    const data = req.query.para
+      ? `%${req.query.para.toLowerCase().replace(/[- ]/g, "")}%`
+      : null;
+    const parameter = new fetchParameter({ type: data });
+    const imageList = await fetchDataTest(database, parameter, pool);
+    console.log(imageList);
+    const response_data = {
+      query: data,
+    };
     console.log(data);
-    console.log("HELL");
+    res.status(200).json(response_data);
+  });
+
+  endpoint.get("/filter", async (req, res) => {
+    const data = req.query || null;
+    console.log(data);
   });
 
   return endpoint;
@@ -336,32 +401,31 @@ function endpoints(express,pool,upload,database) {
   let pool;
   const database = "node";
 
-
   try {
-     pool = mysql.createPool({
-      host: 'localhost',
-      user: 'node',
-      password: 'node_js',
+    pool = mysql.createPool({
+      host: "localhost",
+      user: "node",
+      password: "node_js",
       waitForConnections: true,
       connectionLimit: 10,
       multipleStatements: true,
     });
   } catch (error) {
     console.error(error);
-    throw new Error('Database Pool Creation Failed.');
+    throw new Error("Database Pool Creation Failed.");
   }
 
-  initializeDatabase('node',pool);
-  const upload = filehandler(multer,fs,path);
+  initializeDatabase("node", pool);
+  const upload = filehandler(multer, fs, path);
 
   const app = express();
 
-  app.use('/img',express.static(path.join(__dirname,'../dist/public/img/')));
-  app.use(express.static(path.join(__dirname,'../dist/')));
-  app.use(express.static(path.join(__dirname,'src')));
+  app.use("/img", express.static(path.join(__dirname, "../dist/public/img/")));
+  app.use(express.static(path.join(__dirname, "../dist/")));
+  app.use(express.static(path.join(__dirname, "src")));
 
-  const endpoint = endpoints(express,pool,upload,database);
-  app.use('/',endpoint);
+  const endpoint = endpoints(express, pool, upload, database);
+  app.use("/", endpoint);
 
   app.listen(8080, () => {
     console.log("Server running at https://localhost:8080");
