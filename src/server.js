@@ -393,6 +393,12 @@ function endpoints(express, pool, upload, database) {
     const data = req.query || null;
     console.log(data);
   });
+  endpoint.get("/shop", async (req, res) => {
+    const parameter = new fetchParameter({ priority: 0 });
+    const imageList = await fetchData(database, parameter, pool);
+    console.log(imageList);
+    res.status(200).json(imageList);
+  });
 
   return endpoint;
 }

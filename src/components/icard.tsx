@@ -10,7 +10,7 @@ function ICard(data: ICardProps) {
   return (
   <React.Fragment>
       <div className="icard content">
-        <img src="#" />
+        <img src={`/images/${data.img}`} alt="Description" /> 
         <div className="icard desc">
           <h1>HI MOM</h1>
         </div>
