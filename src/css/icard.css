@@ -1,0 +1,18 @@
+.icard.content {
+  height: 20vh;
+  width: 35vw;
+  border-radius: 1rem;
+}
+
+.icard.content > img {
+  height: 20vh;
+  width: 35vw;
+  border-radius: 1rem;
+  z-index: 999;
+}
+
+.icard.desc {
+  position: absolute;
+  z-index: 1000;
+  background-color: gray;
+}

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import '../css/filter.css';
+import '../css/filter.css'; 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { animated, SpringValue, useSpring } from '@react-spring/web';
@@ -21,6 +21,10 @@ interface AnimatedDivProps {
 function Filter(parameters: Parameters) {
   const [max,setMax] = useState<number>(500);
   const [min,setMin] = useState<number>(500);
+  const [minAge,setMinAge] = useState<number>(10);
+  const [maxAge,setMaxAge] = useState<number>(10);
+  const [colour,setColour] = useState<string>('orange');
+  const [size,setSize] = useState<string>('small');
   const slideAnimation = useSpring({
     right: parameters.isOpen ? "0%": "-75%" ,
     opacity: parameters.isOpen ? 1 : 0.5, 
@@ -29,7 +33,7 @@ function Filter(parameters: Parameters) {
 
   const handleFilter = async () => {
     try {
-      const url: string = `http://192.168.1.76:8080/filter?min=${min}&max=${max}`;
+      const url: string = `http://192.168.1.76:8080/filter?min=${min}&max=${max}&size=${size}&colour=${colour}&maxAge=${maxAge}&minAge=${minAge}`;
       const response = await fetch(url,{
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
@@ -37,6 +41,7 @@ function Filter(parameters: Parameters) {
 
       const responseData = await response.json();
       console.log(responseData);
+      
       
       if(!response.ok) {
         throw new Error(`Response status. ${response.status}`);
@@ -61,7 +66,7 @@ function Filter(parameters: Parameters) {
           className='x-btn'>
           <FontAwesomeIcon icon={faXmark} />
         </button>
-        <h3>Min Price :</h3>
+        <h3>Min Price : Rs.{min}</h3>
         <input 
           type='range' 
           min={200} 
@@ -69,7 +74,7 @@ function Filter(parameters: Parameters) {
           value={min} 
           onChange={(e) => setMin(Number(e.target.value))}
           className='range min'/>
-        <h3>Max Price :</h3>
+        <h3>Max Price : Rs.{max}</h3>
         <input 
           type='range' 
           max={2000} 
@@ -78,7 +83,7 @@ function Filter(parameters: Parameters) {
           onChange={(e) => setMax(Number(e.target.value))}
           className='range max'/>                    
         <h3>Colour</h3>
-        <select className='select colour'>
+        <select className='select colour' value={colour} onChange={(e) => setColour(e.target.value)}>
           <option value="orange">Orange</option>
           <option value="blue">Blue</option>
           <option value="red">Red</option>
@@ -86,11 +91,28 @@ function Filter(parameters: Parameters) {
           <option value="white">White</option>
         </select>
         <h3>Size</h3>
-        <select className='select size'>
-          <option value="Small-Group">Small Group</option>
-          <option value="Medium-Group">Medium Group</option>
-          <option value="Large-Group">Large Group</option>
+        <select className='select size' value={size} onChange={(e) => setSize(e.target.value)}>
+          <option value="small">Small Group</option>
+          <option value="medium">Medium Group</option>
+          <option value="large">Large Group</option>
         </select>
+        <h3>Age Group</h3>
+        <h3>Min Age: {minAge}</h3>
+        <input 
+          type='range'
+          min={0}
+          max={15}
+          value={minAge}
+          onChange={(e) => setMinAge(parseInt(e.target.value))}
+          className="range min-age"/>
+        <h3>Max Age: {maxAge}</h3>
+        <input
+          type='range'
+          min={0}
+          max={15}
+          value={maxAge}
+          onChange={(e) => setMaxAge(parseInt(e.target.value))}
+          className='range max-age'/>
         <button className='filter-search' onClick={handleFilter}>
         Filter Search
         </button>
