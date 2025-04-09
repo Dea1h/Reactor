@@ -4,7 +4,6 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
-import { log } from "console";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -392,6 +391,18 @@ function endpoints(express, pool, upload, database) {
   endpoint.get("/filter", async (req, res) => {
     const data = req.query || null;
     console.log(data);
+    const parameter = new fetchParameter({ priority: 0 });
+    //const parameter = new fetchParameter({
+    //  min_price: data.min,
+    //  max_price: data.max,
+    //  colour: data.colour,
+    //  max_age: data.maxAge,
+    //  min_age: data.minAge,
+    //});
+    console.log(parameter);
+    const imageList = await fetchData(database, parameter, pool);
+    console.log(imageList);
+    res.status(200).json(imageList);
   });
   endpoint.get("/shop", async (req, res) => {
     const parameter = new fetchParameter({ priority: 0 });

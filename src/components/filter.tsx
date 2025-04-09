@@ -3,6 +3,7 @@ import '../css/filter.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { animated, SpringValue, useSpring } from '@react-spring/web';
+import { useNavigate } from 'react-router-dom';
 
 interface Parameters {
   isOpen: Boolean,
@@ -31,6 +32,8 @@ function Filter(parameters: Parameters) {
     config: { tension: 200, friction: 20},
   });
 
+  const navigate = useNavigate();
+
   const handleFilter = async () => {
     try {
       const url: string = `http://192.168.1.76:8080/filter?min=${min}&max=${max}&size=${size}&colour=${colour}&maxAge=${maxAge}&minAge=${minAge}`;
@@ -40,12 +43,11 @@ function Filter(parameters: Parameters) {
       });
 
       const responseData = await response.json();
-      console.log(responseData);
-      
       
       if(!response.ok) {
         throw new Error(`Response status. ${response.status}`);
       }
+      navigate('/shop',{ state: { responseData } });
     } catch (e) {
       throw e;
     }

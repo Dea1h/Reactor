@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import Navbar from '../components/navbar';
 import Filter from '../components/filter';
+import { useLocation } from 'react-router-dom';
 import '../css/shop.css';
 import ICard from './icard';
 
@@ -10,6 +11,9 @@ function Shop() {
   const handlFilter = () => {
     setOpen(!open);
   };
+
+  const location = useLocation();
+  let state = location.state || null;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,45 +29,34 @@ function Shop() {
 
         const responseData = await resposne.json();
         setData(responseData);
-        console.log(responseData);
       } catch (e) {
         throw e;
       }
     }
 
-    fetchData();
+    if(state != null) {
+      setData(state);
+    } else {
+      fetchData();
+    }
   }, []);
 
-  //(async () => {
-  //
-  //  try {
-  //    const url = "http://192.168.1.76:8080/shop";
-  //    const response = await fetch(url, {
-  //      method: 'GET',
-  //      headers: { 'Content-Type': 'application/json' },
-  //    });
-  //
-  //    if(!response.ok) {
-  //      throw new Error(`Response Status: ${response.status}`);
-  //    }
-  //
-  //    const responseData = await response.json();
-  //    console.log(responseData);
-  //  } catch (e) {
-  //    throw e;
-  //  }
-  //})();
+  const groups = [];
+  for(let i = 0;i < data.length;i = i + 2) {
+    groups.push(
+      <div key={i} className='group'>
+        <ICard className='icard' img={data[i].model_image_id} type={data[i].type} />
+        <ICard className='icard' img={data[i+1].model_image_id} type={data[i].type} />
+      </div>
+    );
+  }
 
   return (
     <React.Fragment>
       <Navbar />
       <Filter isOpen={open} setOpen={handlFilter} />
       <div className='display'>
-        {data.map((item,index) => (
-          <div key={index} className={index % 2 === 0 ? '' : 'group'}>
-            <ICard className='icard' img={item.model_image_id} />
-          </div>
-        ))}
+        {groups}
       </div>
     </React.Fragment>
   );
