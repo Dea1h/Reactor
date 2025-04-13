@@ -18,12 +18,14 @@
   border-radius: 1rem;
   z-index: 999;
   object-fit: cover;
+  opacity: 1;
 }
 
 .icard.content.unloaded > img {
   height: 0;
   width: 0;
-  display: none;
+  display: auto;
+  opacity: 0;
 }
 
 @keyframes skeleton {
