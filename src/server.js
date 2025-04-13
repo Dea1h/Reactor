@@ -4,6 +4,7 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
+import { log } from "console";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -35,6 +36,7 @@ async function initializeDatabase(database, pool) {
         colour VARCHAR(10),
         design VARCHAR(50),
         size VARCHAR(25),
+        gender VARCHAR(30),
         FOREIGN KEY (product_id) REFERENCES products(product_id)
       );`;
       await pool.query(query);
@@ -112,6 +114,7 @@ function fetchParameter({
   collection = null,
   priority = null,
   quantity = null,
+  gender = null,
 }) {
   this.image_Id = image_Id;
   this.type = type;
@@ -122,6 +125,8 @@ function fetchParameter({
   this.max_age = max_age;
   this.collection = collection;
   this.priority = priority;
+  this.gender = gender;
+  this.quantity = quantity;
 }
 
 function postParameter({
@@ -137,19 +142,21 @@ function postParameter({
   model_image_id = null,
   colour = null,
   design = null,
+  gender = null,
 }) {
-  (this.product_id = product_id),
-    (this.type = type),
-    (this.price = price),
-    (this.min_age = min_age),
-    (this.max_age = max_age),
-    (this.collection = collection),
-    (this.priority = priority),
-    (this.variation_id = variation_id),
-    (this.quantity = quantity),
-    (this.model_image_id = model_image_id),
-    (this.colour = colour),
-    (this.design = design);
+  this.product_id = product_id;
+  this.type = type;
+  this.price = price;
+  this.min_age = min_age;
+  this.max_age = max_age;
+  this.collection = collection;
+  this.priority = priority;
+  this.variation_id = variation_id;
+  this.quantity = quantity;
+  this.model_image_id = model_image_id;
+  this.colour = colour;
+  this.design = design;
+  this.gender = gender;
 }
 
 function filehandler(multer, fs, path) {
@@ -195,7 +202,8 @@ async function fetchData(database, fetchParameter, pool) {
   const whereClause = ` 
                       SELECT 
                           p.type, p.price, p.min_age, p.max_age, p.collection, 
-                          pv.model_image_id, pv.colour, pv.design, pv.quantity
+                          pv.model_image_id, pv.colour, pv.design, pv.quantity,
+                          pv.gender
                       FROM 
                           products p
                       JOIN 
@@ -405,7 +413,17 @@ function endpoints(express, pool, upload, database) {
     res.status(200).json(imageList);
   });
   endpoint.get("/shop", async (req, res) => {
-    const parameter = new fetchParameter({ priority: 0 });
+    let query = req.query;
+    console.log(query);
+    //console.log(query.minPrice);
+    //const parameter = new fetchParameter({ priority: 0 });
+    const parameter = new fetchParameter({
+      min_price: query.minPrice,
+      max_price: query.maxPrice,
+      //max_age: query.maxAge,
+      //min_age: query.minAge,
+      //colour: query.colour,
+    });
     const imageList = await fetchData(database, parameter, pool);
     console.log(imageList);
     res.status(200).json(imageList);
@@ -440,6 +458,7 @@ function endpoints(express, pool, upload, database) {
   app.use("/img", express.static(path.join(__dirname, "../dist/public/img/")));
   app.use(express.static(path.join(__dirname, "../dist/")));
   app.use(express.static(path.join(__dirname, "src")));
+  app.use(express.json());
 
   const endpoint = endpoints(express, pool, upload, database);
   app.use("/", endpoint);

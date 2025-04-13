@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import '../css/icard.css';
 
 interface ICardProps {
@@ -7,16 +7,23 @@ interface ICardProps {
   type: string;
 }
 
-function ICard(data: ICardProps) {
+function ICard({img,type}: ICardProps) {
+  const [_isLoaded,_setLoaded] = useState<boolean>(false);
+  const handleLoad = () => {
+    console.log("HELL");
+    
+    //setLoaded(true);
+  }
+  
   return (
-  <React.Fragment>
-      <div className="icard content">
-        <img src={`/images/${data.img}`} alt="Description"/>
-        <div className="icard desc">
-          <h3>{data.type}</h3>
+    <React.Fragment>
+      <div className={`icard content ${_isLoaded ? 'loaded' : 'unloaded'}`} >
+        <img src={`/images/${img}`} alt="Description" loading="lazy" onLoad={handleLoad}/>
+          <div className={`icard desc ${_isLoaded ? 'loaded' : 'unloaded'}`} >
+          <h3>{type}</h3>
         </div>
       </div>
-  </React.Fragment>
+    </React.Fragment>
   );
 }
 
