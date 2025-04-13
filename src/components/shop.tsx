@@ -57,13 +57,12 @@ function Shop() {
   }
   useEffect(() => {
     fetchData();
-    handleLoad();
   }, []);
 
   const groups = [];
   for(let i = 0;i < data.length;i = i + 2) {
     groups.push(
-      <div key={i} className={`group ${i}`}>
+      <div key={i} className={`group`}>
         <ICard className='icard' img={data[i].model_image_id} type={data[i].type} />
         <ICard className='icard' img={data[i+1].model_image_id} type={data[i].type} />
       </div>

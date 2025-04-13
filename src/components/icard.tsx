@@ -10,9 +10,7 @@ interface ICardProps {
 function ICard({img,type}: ICardProps) {
   const [_isLoaded,_setLoaded] = useState<boolean>(false);
   const handleLoad = () => {
-    console.log("HELL");
-    
-    //setLoaded(true);
+    _setLoaded(true);
   }
   
   return (

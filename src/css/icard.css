@@ -18,7 +18,6 @@
   border-radius: 1rem;
   z-index: 999;
   object-fit: cover;
-  /*animation: skeleton 1s linear infinite alternate;*/
 }
 
 .icard.content.unloaded > img {
