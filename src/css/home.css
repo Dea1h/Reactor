@@ -1,12 +1,12 @@
-.shop.display {
-  margin-top: 8rem;
+.home.display {
+  margin-top: 1rem;
   display: flex;
   flex-direction: column;
   gap: 2rem;
   align-items: center;
 }
 
-.shop.group {
+.home.group {
   display: flex;
   flex-direction: row;
   gap: 3rem;

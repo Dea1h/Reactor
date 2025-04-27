@@ -382,6 +382,12 @@ function endpoints(express, pool, upload, database) {
     res.sendFile(indexHTML);
   });
 
+  endpoint.get("/home", async (req, res) => {
+    const parameter = new fetchParameter({ priority: 0 });
+    const imageList = await fetchData(database, parameter, pool);
+    res.status(200).json(imageList);
+  });
+
   endpoint.get("/search", async (req, res) => {
     const data = req.query.para
       ? `%${req.query.para.toLowerCase().replace(/[- ]/g, "")}%`
@@ -427,6 +433,12 @@ function endpoints(express, pool, upload, database) {
     const imageList = await fetchData(database, parameter, pool);
     console.log(imageList);
     res.status(200).json(imageList);
+  });
+  endpoint.get("/product", async (req, res) => {
+    const model_id = req.query.model;
+    let imageList = subQuery(database, pool, model_id);
+    console.log(imageList);
+    res.send(200).json(imageList);
   });
 
   return endpoint;

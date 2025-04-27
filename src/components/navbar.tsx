@@ -20,7 +20,7 @@ function Navbar() {
         <button onClick={handleToggle}>
         <FontAwesomeIcon icon={faMagnifyingGlass} />
         </button>
-        <NavLink to='/' className={({ isActive }) => (isActive ? 'active-link' : 'inactive-link')}>
+        <NavLink to='/cart' className={({ isActive }) => (isActive ? 'active-link' : 'inactive-link')}>
           <FontAwesomeIcon icon={faCartShopping} />
         </NavLink>
         <NavLink to='/shop' className={({ isActive }) => (isActive ? 'active-link' : 'inactive-link')}>
