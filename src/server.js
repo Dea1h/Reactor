@@ -220,6 +220,7 @@ async function fetchData(database, fetchParameter, pool) {
                           AND pv.colour = COALESCE(?, pv.colour);
                         `;
 
+  console.log(fetchParameter);
   try {
     await pool.query(`USE ${database};`);
     const [rows, fields] = await pool.query(whereClause, [
@@ -311,7 +312,7 @@ async function subQuery(database, pool, model_image_id) {
     const [rows, fields] = await pool.query(query, [model_image_id]);
     return rows;
   } catch (error) {
-    throw new Error(`Error Subquery.`);
+    throw new Error(`Error Subquery.${error}`);
   }
 }
 
@@ -376,11 +377,11 @@ function endpoints(express, pool, upload, database) {
 
   endpoint.get("/", async (req, res) => {
     const indexHTML = path.join(__dirname, "index.html");
-    const parameter = new fetchParameter({ priority: 0 });
-    const home_imageList = await fetchData(database, parameter, pool);
-    const shop_imageList = home_imageList;
     res.sendFile(indexHTML);
   });
+  //endpoint.get("*", async (req, res) => {
+  //  const indexHTML = path.join();
+  //});
 
   endpoint.get("/home", async (req, res) => {
     const parameter = new fetchParameter({ priority: 0 });
@@ -419,8 +420,8 @@ function endpoints(express, pool, upload, database) {
     res.status(200).json(imageList);
   });
   endpoint.get("/shop", async (req, res) => {
+    console.log(path.join(__dirname, "index.html"));
     let query = req.query;
-    console.log(query);
     //console.log(query.minPrice);
     //const parameter = new fetchParameter({ priority: 0 });
     const parameter = new fetchParameter({
@@ -431,14 +432,15 @@ function endpoints(express, pool, upload, database) {
       //colour: query.colour,
     });
     const imageList = await fetchData(database, parameter, pool);
-    console.log(imageList);
+    //console.log(imageList);
     res.status(200).json(imageList);
   });
   endpoint.get("/product", async (req, res) => {
     const model_id = req.query.model;
-    let imageList = subQuery(database, pool, model_id);
+    console.log(model_id);
+    let imageList = await subQuery(database, pool, model_id);
     console.log(imageList);
-    res.send(200).json(imageList);
+    res.status(200).json(imageList);
   });
 
   return endpoint;

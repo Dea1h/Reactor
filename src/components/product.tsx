@@ -3,22 +3,69 @@ import Navbar from "./navbar";
 import '../css/product.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { useLocation } from "react-router-dom";
+import {
+  useSpring,
+  animated,
+  SpringValue
+} from '@react-spring/web';
 
-interface ProductProps {
-  model_id: String;
+interface AnimatedProps {
+  style: {
+    right: SpringValue<string>;
+  };
+  className?: string;
+  children?: React.ReactNode;
 }
 
-function Product({model_id}: ProductProps) {
+function Product() {
+
+  const [pos,setPos] = useState<number>(0);
+  const [index,setIndex] = useState<number>(0);
+
+  const spring = useSpring({
+    right: `${pos}%`,
+    config: {
+      duration: 100
+    }
+  });
+
+  const handeChange = (direction: number,len: number) => {
+    console.log(direction,len,index);
+    
+    if(direction == 0) {
+      if(index == 0) {
+        return;
+      }
+      let change: number = Math.floor(100 / len);
+      console.log(change * 2);
+      setPos(pos - (change * 2));
+      setIndex(index - 1);
+    } else if(direction == 1) {
+      if(index == (len - 1)) {
+        return;
+      }
+      let change: number = Math.floor(100 / len);
+      console.log(change * 2);
+      setPos(pos + (change * 2));
+      setIndex(index + 1);
+    }
+  }
 
   const [quant,setQuant] = useState<number>(1);
   const [data,setData] = useState<any[]>([]);
 
-  const Fetchdate = async (model_id: String,
-    setData: React.Dispatch<React.SetStateAction<any[]>>) => {
+  const location = useLocation();
+  let state = location.state;
 
+  const Fetchdate = async (state: any,
+    setData: React.Dispatch<React.SetStateAction<any[]>>) => {
+    
     try {
       
-      let url = `http://192.168.1.76/product?model=${model_id}`;
+      let url = `http://localhost:8080/product?model=${state.model_id}`;
+      console.log(url);
+      
 
       let response  = await fetch(url,{
         method: "GET",
@@ -43,29 +90,35 @@ function Product({model_id}: ProductProps) {
   let group = [];
   for(let i = 0;i < data.length;i++) {
     group.push(
-      <img src={data[i].model_image_id} loading="lazy"/>
+      <img src={`/images/${data[i].model_image_id}`} />
     );
   }
 
   useEffect(() => {
-    Fetchdate(model_id,setData);
-  },[model_id,setData]);
+    Fetchdate(state,setData);
+  },[state,setData]);
 
   return (
     <React.Fragment>
       <Navbar />
       <div className="product content">
-        <button className='btn back'>
+        <button className='btn back' onClick={() => handeChange(0,data.length)}>
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
-        <button className='btn forward'>
+        <button className='btn forward' onClick={() => handeChange(1,data.length)}>
           <FontAwesomeIcon icon={faArrowRight} />
         </button>
-        <img src="/images/1.jpg" loading="lazy"/>
+        <animated.div 
+          {...{
+            style: spring,
+            className: "img container"
+          }as AnimatedProps}
+        >
+          <img src="1.jpg" alt="Image Of Product"/>
+        </animated.div>
         <div className="product desc">
           <h3>T-Shirt</h3>
-          <h3>Size:</h3>
-          <h4>XL,L,M,S</h4>
+          <h3>Size:XL,L,M,S</h3>
           <h3>Quantity</h3>
           <input 
             type="number" 

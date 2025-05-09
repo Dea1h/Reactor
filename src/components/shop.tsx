@@ -1,4 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React,{ 
+  useEffect,
+  useState
+} from 'react';
+
+import {
+  NavLink
+} from 'react-router-dom'
+
 import Navbar from '../components/navbar';
 import Filter from '../components/filter';
 import ICard from './icard';
@@ -40,15 +48,10 @@ function Shop() {
       setOpen(false);
       await sleep(200);
       
-      const url: string = `http://192.168.1.76:8080/shop?
-                                    minPrice=${state?.minPrice}
-                                    &maxPrice=${state?.maxPrice}
-                                    &minAge=${state?.minAge}
-                                    &maxAge=${state?.maxAge}
-                                    &gender=${state?.gender}
-                                    &colour=${state?.colour}
-                                    &size=${state?.size}`;
+      const url: string = `http://localhost:8080/shop?minPrice=${state?.minPrice}&maxPrice=${state?.maxPrice}&minAge=${state?.minAge}&maxAge=${state?.maxAge}&gender=${state?.gender}&colour=${state?.colour}&size=${state?.size}`;
 
+      console.log(url);
+      
       const resposne = await fetch(url, {
         method: 'GET',
         headers: {
@@ -61,6 +64,8 @@ function Shop() {
       }
 
       const responseData = await resposne.json();
+      console.log(responseData);
+      
 
       setData(responseData);
 
@@ -78,8 +83,18 @@ function Shop() {
   for(let i = 0;i < data.length;i = i + 2) {
     groups.push(
       <div key={i} className={`shop group`}>
+        <NavLink
+          key={data[i].model_image_id}
+          to={`/product`}
+          state={{model_id: data[i].model_image_id}}>
         <ICard className='icard' img={data[i].model_image_id} type={data[i].type} />
-        <ICard className='icard' img={data[i+1].model_image_id} type={data[i].type} />
+        </NavLink>
+        <NavLink
+          key={data[i+1].model_image_id}
+          to={`/product`}
+          state={{model_id: data[i+1].model_image_id}}>
+        <ICard className='icard' img={data[i+1].model_image_id} type={data[i+1].type} />
+        </NavLink>
       </div>
     );
   }
