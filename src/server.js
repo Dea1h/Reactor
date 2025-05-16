@@ -4,7 +4,6 @@ import multer from "multer";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
-import { log } from "console";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -103,61 +102,121 @@ async function insertProductByParameter(database, pool, postParameter) {
   }
 }
 
-function fetchParameter({
-  image_Id = null,
-  type = null,
-  max_price = null,
-  min_price = null,
-  colour = null,
-  max_age = null,
-  min_age = null,
-  collection = null,
-  priority = null,
-  quantity = null,
-  gender = null,
-}) {
-  this.image_Id = image_Id;
-  this.type = type;
-  this.max_price = max_price;
-  this.min_price = min_price;
-  this.colour = colour;
-  this.min_age = min_age;
-  this.max_age = max_age;
-  this.collection = collection;
-  this.priority = priority;
-  this.gender = gender;
-  this.quantity = quantity;
+class FetchParameter {
+  constructor({
+    image_Id = null,
+    type = null,
+    max_price = null,
+    min_price = null,
+    colour = null,
+    max_age = null,
+    min_age = null,
+    collection = null,
+    priority = null,
+    quantity = null,
+    gender = null,
+  } = {}) {
+    this.image_Id = image_Id;
+    this.type = type;
+    this.max_price = max_price;
+    this.min_price = min_price;
+    this.colour = colour;
+    this.min_age = min_age;
+    this.max_age = max_age;
+    this.collection = collection;
+    this.priority = priority;
+    this.gender = gender;
+    this.quantity = quantity;
+  }
 }
 
-function postParameter({
-  product_id = null,
-  type = null,
-  price = null,
-  min_age = null,
-  max_age = null,
-  collection = null,
-  priority = null,
-  variation_id = null,
-  quantity = null,
-  model_image_id = null,
-  colour = null,
-  design = null,
-  gender = null,
-}) {
-  this.product_id = product_id;
-  this.type = type;
-  this.price = price;
-  this.min_age = min_age;
-  this.max_age = max_age;
-  this.collection = collection;
-  this.priority = priority;
-  this.variation_id = variation_id;
-  this.quantity = quantity;
-  this.model_image_id = model_image_id;
-  this.colour = colour;
-  this.design = design;
-  this.gender = gender;
+// function fetchParameter({
+//   image_Id = null,
+//   type = null,
+//   max_price = null,
+//   min_price = null,
+//   colour = null,
+//   max_age = null,
+//   min_age = null,
+//   collection = null,
+//   priority = null,
+//   quantity = null,
+//   gender = null,
+// }) {
+//   this.image_Id = image_Id;
+//   this.type = type;
+//   this.max_price = max_price;
+//   this.min_price = min_price;
+//   this.colour = colour;
+//   this.min_age = min_age;
+//   this.max_age = max_age;
+//   this.collection = collection;
+//   this.priority = priority;
+//   this.gender = gender;
+//   this.quantity = quantity;
+// }
+
+class PostParameter {
+  constructor({
+    product_id = null,
+    type = null,
+    price = null,
+    min_age = null,
+    max_age = null,
+    collection = null,
+    priority = null,
+    variation_id = null,
+    quantity = null,
+    model_image_id = null,
+    colour = null,
+    design = null,
+    gender = null,
+  } = {}) {
+    this.product_id = product_id;
+    this.type = type;
+    this.price = price;
+    this.min_age = min_age;
+    this.max_age = max_age;
+    this.collection = collection;
+    this.priority = priority;
+    this.variation_id = variation_id;
+    this.quantity = quantity;
+    this.model_image_id = model_image_id;
+    this.colour = colour;
+    this.design = design;
+    this.gender = gender;
+  }
 }
+
+// function postParameter({
+//   product_id = null,
+//   type = null,
+//   price = null,
+//   min_age = null,
+//   max_age = null,
+//   collection = null,
+//   priority = null,
+//   variation_id = null,
+//   quantity = null,
+//   model_image_id = null,
+//   colour = null,
+//   design = null,
+//   gender = null,
+// }) {
+//   this.product_id = product_id;
+//   this.type = type;
+//   this.price = price;
+//   this.min_age = min_age;
+//   this.max_age = max_age;
+//   this.collection = collection;
+//   this.priority = priority;
+//   this.variation_id = variation_id;
+//   this.quantity = quantity;
+//   this.model_image_id = model_image_id;
+//   this.colour = colour;
+//   this.design = design;
+//   this.gender = gender;
+// }
 
 function filehandler(multer, fs, path) {
   //Directory to store images;
@@ -198,7 +257,7 @@ function filehandler(multer, fs, path) {
   return upload;
 }
 
-async function fetchData(database, fetchParameter, pool) {
+async function fetchData(database, FetchParameter, pool) {
   const whereClause = ` 
                       SELECT 
                           p.type, p.price, p.min_age, p.max_age, p.collection, 
@@ -220,19 +279,18 @@ async function fetchData(database, fetchParameter, pool) {
                           AND pv.colour = COALESCE(?, pv.colour);
                         `;
 
-  console.log(fetchParameter);
   try {
     await pool.query(`USE ${database};`);
     const [rows, fields] = await pool.query(whereClause, [
-      fetchParameter.type,
-      fetchParameter.max_price,
-      fetchParameter.min_price,
-      fetchParameter.min_age,
-      fetchParameter.max_age,
-      fetchParameter.collection,
-      fetchParameter.priority,
-      fetchParameter.image_Id,
-      fetchParameter.colour,
+      FetchParameter.type,
+      FetchParameter.max_price,
+      FetchParameter.min_price,
+      FetchParameter.min_age,
+      FetchParameter.max_age,
+      FetchParameter.collection,
+      FetchParameter.priority,
+      FetchParameter.image_Id,
+      FetchParameter.colour,
     ]);
     return rows;
   } catch (error) {
@@ -241,7 +299,7 @@ async function fetchData(database, fetchParameter, pool) {
   }
 }
 
-async function fetchDataTest(database, fetchParameter, pool) {
+async function fetchDataTest(database, FetchParameter, pool) {
   const whereClause = ` 
                       SELECT 
                           p.type, p.price, p.min_age, p.max_age, p.collection, 
@@ -263,18 +321,17 @@ async function fetchDataTest(database, fetchParameter, pool) {
                         `;
 
   try {
-    console.log(whereClause);
     await pool.query(`USE ${database};`);
     const [rows, fields] = await pool.query(whereClause, [
-      fetchParameter.type,
-      fetchParameter.max_price,
-      fetchParameter.min_price,
-      fetchParameter.min_age,
-      fetchParameter.max_age,
-      fetchParameter.collection,
-      fetchParameter.priority,
-      fetchParameter.image_Id,
-      fetchParameter.colour,
+      FetchParameter.type,
+      FetchParameter.max_price,
+      FetchParameter.min_price,
+      FetchParameter.min_age,
+      FetchParameter.max_age,
+      FetchParameter.collection,
+      FetchParameter.priority,
+      FetchParameter.image_Id,
+      FetchParameter.colour,
     ]);
     return rows;
   } catch (error) {
@@ -376,37 +433,32 @@ function endpoints(express, pool, upload, database) {
   const endpoint = express.Router();
 
   endpoint.get("/", async (req, res) => {
-    const indexHTML = path.join(__dirname, "index.html");
+    const indexHTML = "/home/neon/PROJECTS/reactor/dist/index.html";
     res.sendFile(indexHTML);
   });
-  //endpoint.get("*", async (req, res) => {
-  //  const indexHTML = path.join();
-  //});
 
-  endpoint.get("/home", async (req, res) => {
-    const parameter = new fetchParameter({ priority: 0 });
+  endpoint.get("/api/home", async (req, res) => {
+    const parameter = new FetchParameter({ priority: 0 });
     const imageList = await fetchData(database, parameter, pool);
     res.status(200).json(imageList);
   });
 
-  endpoint.get("/search", async (req, res) => {
-    const data = req.query.para
-      ? `%${req.query.para.toLowerCase().replace(/[- ]/g, "")}%`
+  endpoint.get("/api/search", async (req, res) => {
+    const data = req.query.term
+      ? `%${req.query.term.toLowerCase().replace(/[- ]/g, "")}%`
       : null;
-    const parameter = new fetchParameter({ type: data });
+    const parameter = new FetchParameter({ type: data });
     const imageList = await fetchDataTest(database, parameter, pool);
+    // const response_data = {
+    //   query: data,
+    // };
     console.log(imageList);
-    const response_data = {
-      query: data,
-    };
-    console.log(data);
-    res.status(200).json(response_data);
+    res.status(200).json(imageList);
   });
 
-  endpoint.get("/filter", async (req, res) => {
+  endpoint.get("/api/filter", async (req, res) => {
     const data = req.query || null;
-    console.log(data);
-    const parameter = new fetchParameter({ priority: 0 });
+    const parameter = new FetchParameter({ priority: 0 });
     //const parameter = new fetchParameter({
     //  min_price: data.min,
     //  max_price: data.max,
@@ -414,17 +466,13 @@ function endpoints(express, pool, upload, database) {
     //  max_age: data.maxAge,
     //  min_age: data.minAge,
     //});
-    console.log(parameter);
     const imageList = await fetchData(database, parameter, pool);
-    console.log(imageList);
     res.status(200).json(imageList);
   });
-  endpoint.get("/shop", async (req, res) => {
-    console.log(path.join(__dirname, "index.html"));
+  endpoint.get("/api/shop", async (req, res) => {
     let query = req.query;
-    //console.log(query.minPrice);
     //const parameter = new fetchParameter({ priority: 0 });
-    const parameter = new fetchParameter({
+    const parameter = new FetchParameter({
       min_price: query.minPrice,
       max_price: query.maxPrice,
       //max_age: query.maxAge,
@@ -432,15 +480,16 @@ function endpoints(express, pool, upload, database) {
       //colour: query.colour,
     });
     const imageList = await fetchData(database, parameter, pool);
-    //console.log(imageList);
     res.status(200).json(imageList);
   });
-  endpoint.get("/product", async (req, res) => {
+  endpoint.get("/api/product", async (req, res) => {
     const model_id = req.query.model;
-    console.log(model_id);
     let imageList = await subQuery(database, pool, model_id);
-    console.log(imageList);
     res.status(200).json(imageList);
+  });
+  endpoint.get("*", async (req, res) => {
+    const indexHTML = "/home/neon/PROJECTS/reactor/dist/index.html";
+    res.sendFile(indexHTML);
   });
 
   return endpoint;
@@ -470,8 +519,12 @@ function endpoints(express, pool, upload, database) {
   const app = express();
 
   app.use("/img", express.static(path.join(__dirname, "../dist/public/img/")));
+  //app.use(
+  //  "/images",
+  //  express.static("/home/neon/PROJECTS/reactor/dist/images/"),
+  //);
   app.use(express.static(path.join(__dirname, "../dist/")));
-  app.use(express.static(path.join(__dirname, "src")));
+  //app.use(express.static(path.join(__dirname, "src")));
   app.use(express.json());
 
   const endpoint = endpoints(express, pool, upload, database);

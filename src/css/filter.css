@@ -21,8 +21,11 @@
   font-size: 1rem;
   padding: 1rem 1.5rem;
   z-index: 999;
-  border-radius: 5px;
+  /*border-radius: 5px;*/
   box-shadow: -2px 0 5px rgba(0, 0, 0, 0.3);
+  background-color: white;
+  color: black;
+  border: none;
 }
 
 .filter-btn:hover {
@@ -51,12 +54,17 @@
 
 .x-btn {
   font-size: 1.5rem;
+  background-color: white;
+  border: none;
 }
 
 .filter-search {
   border: 2px solid black;
-  padding: 1rem 4rem;
+  padding: 1rem 1rem;
   border-radius: 0.5rem;
+  font-weight: 800;
+  font-size: 1rem;
+  width: 90%;
 }
 
 .filter-search:hover {
@@ -66,4 +74,8 @@
 
 .filter-content h1,h2,h3,h4,h5 {
   font-weight: 800;
+}
+
+.filter-content > input {
+  width: 90%;
 }

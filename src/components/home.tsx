@@ -8,7 +8,8 @@ function Home() {
 
   const fetchData = async () => {
     try {
-      const url = `http://localhost:8080/home`;
+      const url = `http://localhost:8080/api/home`;
+      
       const response = await fetch(url, {
         method: 'GET',
         headers: {

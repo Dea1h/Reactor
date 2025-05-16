@@ -48,7 +48,7 @@ function Shop() {
       setOpen(false);
       await sleep(200);
       
-      const url: string = `http://localhost:8080/shop?minPrice=${state?.minPrice}&maxPrice=${state?.maxPrice}&minAge=${state?.minAge}&maxAge=${state?.maxAge}&gender=${state?.gender}&colour=${state?.colour}&size=${state?.size}`;
+      const url: string = `http://localhost:8080/api/shop?minPrice=${state?.minPrice}&maxPrice=${state?.maxPrice}&minAge=${state?.minAge}&maxAge=${state?.maxAge}&gender=${state?.gender}&colour=${state?.colour}&size=${state?.size}`;
 
       console.log(url);
       
