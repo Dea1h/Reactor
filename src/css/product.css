@@ -5,7 +5,7 @@
   color: black;
 }
 
-.product.content>.img.container>img {
+.product.content > .img.container > img {
   width: 100vw;
   height: 70vh;
   object-fit: cover;
@@ -35,7 +35,7 @@
   margin: 0.5rem 1rem 0.5rem 1rem;
 }
 
-.product.desc>h1,
+.product.desc > h1,
 h2,
 h3,
 h4,
@@ -78,6 +78,15 @@ h5 {
 }
 
 .colour {
+  width: 50%;
+  padding: 0.75rem 0.4rem 0.5rem;
+  font-weight: 500;
+  color: white;
+  background-color: black;
+  border-radius: 1rem;
+}
+
+.size_group {
   width: 50%;
   padding: 0.75rem 0.4rem 0.5rem;
   font-weight: 500;

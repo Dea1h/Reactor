@@ -25,15 +25,12 @@ function Product() {
     },
   });
 
-  const handeChange = (direction: number, len: number) => {
-    console.log(direction, len, index);
-
+  const handleChange = (direction: number, len: number) => {
     if (direction == 0) {
-      if (index == 0) {
+      if (index == -1) {
         return;
       }
       let change: number = Math.floor(100 / len);
-      console.log(change * 2);
       setPos(pos - change * 2);
       setIndex(index - 1);
     } else if (direction == 1) {
@@ -41,7 +38,6 @@ function Product() {
         return;
       }
       let change: number = Math.floor(100 / len);
-      console.log(change * 2);
       setPos(pos + change * 2);
       setIndex(index + 1);
     }
@@ -51,6 +47,7 @@ function Product() {
   const [data, setData] = useState<any[]>([]);
 
   const location = useLocation();
+
   let state = location.state;
 
   const Fetchdate = async (
@@ -58,9 +55,10 @@ function Product() {
     setData: React.Dispatch<React.SetStateAction<any[]>>,
   ) => {
     try {
-      let url = `http://localhost:8080/api/product?model=${state.model_id}`;
+      let url: string = `http://localhost:8080/api/product?model=${state.model_id}`;
+      console.log(url);
 
-      let response = await fetch(url, {
+      let response: Response = await fetch(url, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -72,29 +70,72 @@ function Product() {
       }
 
       let responseData = await response.json();
+      console.log(responseData);
+
 
       setData(responseData);
-    } catch (e) {
-      throw e;
+      console.log(responseData);
+
+    } catch (e: any) {
+      try {
+
+        let url: string = `http://192.168.1.76:8080/api/product?model=${state.model_id}`;
+
+        let response: Response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Reponse Failed: Status:${response.status}`);
+        }
+
+        let responseData = await response.json();
+        console.log(responseData);
+
+
+        setData(responseData);
+      } catch (e) {
+        throw e;
+      }
     }
   };
 
-  let group = [];
+
+  let colour_option: React.ReactNode[] = [];
+  let size_option: React.ReactNode[] = [];
+  let group: React.ReactNode[] = [];
+  let size: React.ReactNode[] = [];
   for (let i = 0; i < data.length; i++) {
-    group.push(<img src={`/images/${data[i].model_image_id}`} />);
+    group.push(<img src={`/images/${data[i].image_id}`} />);
+    colour_option.push(<option value={data[i].colour}>{data[i].colour}</option>);
+    size_option.push(<option value={data[i].size_group}>{data[i].size_group}</option>);
+    size.push(<h1>{data[i].size}</h1>);
   }
 
   useEffect(() => {
+    if (location.state == null) {
+      console.log("ERROR LOCATED");
+    }
     Fetchdate(state, setData);
   }, [state, setData]);
 
-  let option = [];
-  for (let i = 0; i < data.length; i++) {
-    option.push(<option value={data[i].colour}>{data[i].colour}</option>);
-  }
-  for (let i = 0; i < data.length; i++) {
-    console.log(data[i].colour);
-  }
+
+  // const handleProduct = (product: { id: string, stock: number, type: string, price: number, size_group: string, }) => {
+  //   let cart = JSON.parse(localStorage.getItem('cart') || []);
+  //
+  //   let existIndex = cart.findIndex((item: any) => item.id === product.id);
+  //
+  //   if (existIndex !== -1) {
+  //     cart[existIndex].stock += product.stock;
+  //   } else {
+  //     cart.push(product);
+  //   }
+  //
+  //   localStorage.setItem('cart', JSON.stringify(cart));
+  // };
 
   return (
     <React.Fragment>
@@ -102,13 +143,13 @@ function Product() {
       <div className="product content">
         <button
           className="btn back"
-          onClick={() => handeChange(0, data.length)}
+          onClick={() => handleChange(0, data.length)}
         >
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
         <button
           className="btn forward"
-          onClick={() => handeChange(1, data.length)}
+          onClick={() => handleChange(1, data.length)}
         >
           <FontAwesomeIcon icon={faArrowRight} />
         </button>
@@ -121,9 +162,7 @@ function Product() {
           {group}
         </animated.div>
         <div className="product desc">
-          <h3>T-Shirt</h3>
-          <h3>Size:XL,L,M,S</h3>
-          <h3>Quantity</h3>
+          <h3></h3>
           <input
             type="number"
             className="quantity-in"
@@ -132,9 +171,12 @@ function Product() {
             onChange={(e) => setQuant(Number(e.target.value))}
           />
           <select name="colour" className="colour">
-            {option}
+            {colour_option}
           </select>
-          <button className="cart-btn">ADD TO CART</button>
+          <select name="size_group" className="size_group">
+            {size_option}
+          </select>
+          {size}
         </div>
       </div>
     </React.Fragment>

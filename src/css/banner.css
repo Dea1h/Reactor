@@ -1,0 +1,22 @@
+.banner {
+  background-image: url("/images/gradient.jpg");
+  background-size: cover;
+  background-position: center;
+  width: 100%;
+  width: 6rem;
+  height: 15rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  border-radius: 1rem;
+  /* transition: transition 0.5s linear; */
+}
+
+.banner > h2 {
+  padding: 1.5rem;
+}
+
+/* .banner:hover { */
+/*   transform: scale(1.5); */
+/* } */

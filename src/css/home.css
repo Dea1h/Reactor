@@ -11,3 +11,12 @@
   flex-direction: row;
   gap: 3rem;
 }
+
+.banner.display {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  margin-left: 8rem;
+  margin-top: 2rem;
+  margin-bottom: 5rem;
+}

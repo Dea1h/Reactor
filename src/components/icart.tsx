@@ -4,21 +4,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 interface ICartProps {
-  type?: string;
-  ppu?: number;
-  quantity?: number;
+  type: string;
+  price: number;
+  quantity: number;
+  id: string;
 }
 
-function ICart(props: ICartProps) {
-  console.log(props);
+function ICart({ type, price, quantity, id }: ICartProps) {
 
   return (
     <React.Fragment>
       <div className="icart content">
-        <img src="/images/1.jpg" loading="lazy" alt="Product Image" />
-        <h1>Type</h1>
-        <h1>Price Per Unit</h1>
-        <h1>Total</h1>
+        <img src={`/images/${id}`} loading="lazy" alt="Product Image" />
+        <h1>{type}</h1>
+        <h1>{price}</h1>
+        <h1>{price * quantity}</h1>
         <button>
           <FontAwesomeIcon icon={faTrash} />
         </button>
