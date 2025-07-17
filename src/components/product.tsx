@@ -50,58 +50,56 @@ function Product() {
 
   let state = location.state;
 
-  const Fetchdate = async (
-    state: any,
-    setData: React.Dispatch<React.SetStateAction<any[]>>,
-  ) => {
-    try {
-      let url: string = `http://localhost:8080/api/product?model=${state.model_id}`;
-      console.log(url);
-
-      let response: Response = await fetch(url, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error(`Reponse Failed: Status:${response.status}`);
-      }
-
-      let responseData = await response.json();
-      console.log(responseData);
-
-
-      setData(responseData);
-      console.log(responseData);
-
-    } catch (e: any) {
-      try {
-
-        let url: string = `http://192.168.1.76:8080/api/product?model=${state.model_id}`;
-
-        let response: Response = await fetch(url, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`Reponse Failed: Status:${response.status}`);
-        }
-
-        let responseData = await response.json();
-        console.log(responseData);
-
-
-        setData(responseData);
-      } catch (e) {
-        throw e;
-      }
-    }
-  };
+  // const Fetchdate = async (
+  //   state: any,
+  //   setData: React.Dispatch<React.SetStateAction<any[]>>,
+  // ) => {
+  //   try {
+  //     let url: string = `http://localhost:8080/api/product?model=${state.model_id}`;
+  //     console.log(url);
+  //
+  //     let response: Response = await fetch(url, {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+  //
+  //     if (!response.ok) {
+  //       throw new Error(`Reponse Failed: Status:${response.status}`);
+  //     }
+  //
+  //     let responseData = await response.json();
+  //
+  //
+  //     setData(responseData);
+  //
+  //     console.log("HELLO");
+  //     console.log(data[0]);
+  //   } catch (e: any) {
+  //     try {
+  //
+  //       let url: string = `http://192.168.1.76:8080/api/product?model=${state.model_id}`;
+  //
+  //       let response: Response = await fetch(url, {
+  //         method: "GET",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       });
+  //
+  //       if (!response.ok) {
+  //         throw new Error(`Reponse Failed: Status:${response.status}`);
+  //       }
+  //
+  //       let responseData = await response.json();
+  //
+  //       setData(responseData);
+  //     } catch (e) {
+  //       throw e;
+  //     }
+  //   }
+  // };
 
 
   let colour_option: React.ReactNode[] = [];
@@ -119,8 +117,58 @@ function Product() {
     if (location.state == null) {
       console.log("ERROR LOCATED");
     }
+    const Fetchdate = async (
+      state: any,
+      setData: React.Dispatch<React.SetStateAction<any[]>>,
+    ) => {
+      try {
+        let url: string = `http://localhost:8080/api/product?model=${state.model_id}`;
+        console.log(url);
+
+        let response: Response = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        if (!response.ok) {
+          throw new Error(`Reponse Failed: Status:${response.status}`);
+        }
+
+        let responseData = await response.json();
+
+
+        setData(responseData);
+
+        console.log("HELLO");
+        console.log(data[0]);
+      } catch (e: any) {
+        try {
+
+          let url: string = `http://192.168.1.76:8080/api/product?model=${state.model_id}`;
+
+          let response: Response = await fetch(url, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error(`Reponse Failed: Status:${response.status}`);
+          }
+
+          let responseData = await response.json();
+
+          setData(responseData);
+        } catch (e) {
+          throw e;
+        }
+      }
+    };
     Fetchdate(state, setData);
-  }, [state, setData]);
+  }, [state]);
 
 
   // const handleProduct = (product: { id: string, stock: number, type: string, price: number, size_group: string, }) => {
@@ -162,7 +210,7 @@ function Product() {
           {group}
         </animated.div>
         <div className="product desc">
-          <h3></h3>
+          {data.length > 0 && <h1>{data[0].type}</h1>}
           <input
             type="number"
             className="quantity-in"
