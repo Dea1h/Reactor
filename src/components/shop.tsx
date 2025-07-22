@@ -153,6 +153,16 @@ function Shop() {
 
   }, [filters]);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 100) {
+        loadData();
+      }
+    }
+    document.addEventListener("scroll", handleScroll);
+    return () => document.removeEventListener("scroll", handleScroll);
+  }, []);
+
   /* To Dynamically Add Images On The Shop Every Time Users Scrolls To Bottom*/
   const groups = [];
 

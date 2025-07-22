@@ -563,7 +563,7 @@ function endpoints(express, pool, upload, database) {
 
   endpoint.get("/api/home", async (req, res) => {
     const parameter = new FetchParameter({
-      date_added: 30,
+      date_added: 100,
     });
     const imageList = await fetchDataTest(database, parameter, pool);
     console.log(imageList);

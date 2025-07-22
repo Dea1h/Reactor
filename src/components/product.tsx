@@ -44,6 +44,8 @@ function Product() {
   };
 
   const [quant, setQuant] = useState<number>(1);
+  // const [color, setColor] = useState<string>("Blue");
+  // const [size, setSize] = useState<string>("M");
   const [data, setData] = useState<any[]>([]);
 
   const location = useLocation();

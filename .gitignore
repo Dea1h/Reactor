@@ -23,3 +23,6 @@ public
 *.njsproj
 *.sln
 *.sw?
+server.bak
+src/components/filter_bak.tsx
+src/components/shop_bak.tsx

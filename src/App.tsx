@@ -10,6 +10,8 @@ import Product from './components/product';
 import Cart from './components/cart';
 import { FilterContext, FilterSettings } from './components/context';
 import { useState } from 'react';
+import Payment from './components/payment';
+import Login from './components/login';
 
 function App() {
 
@@ -33,6 +35,8 @@ function App() {
             <Route path='/shop' element={<Shop />} />
             <Route path='/cart' element={<Cart />} />
             <Route path='/product' element={<Product />} />
+            <Route path='/payment' element={<Payment />} />
+            <Route path='/admin' element={<Login />} />
           </Routes>
         </Router>
       </FilterContext.Provider>
