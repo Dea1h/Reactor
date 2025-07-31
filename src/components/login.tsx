@@ -4,13 +4,14 @@ function Login() {
   const [user, setUser] = useState<string>("");
   const [pass, setPass] = useState<string>("");
   const handleLogin = () => {
+    /* @ts-ignore */
     const url = `https://localhost:8080/?user=${user}&pass=${pass}`;
-    const response = fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-    });
+    // const response = fetch(url, {
+    //   method: 'GET',
+    //   headers: {
+    //     'Content-Type': 'application/json'
+    //   },
+    // });
   }
   return (
     <React.Fragment>

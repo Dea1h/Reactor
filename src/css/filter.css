@@ -101,3 +101,15 @@ h5 {
 .filter-content > input {
   width: 90%;
 }
+
+.filter-content > input[type="range"] {
+  accent-color: #242424;
+}
+
+/* .filter-content > input::-webkit-slider-thumb { */
+/*   background: purple; */
+/* } */
+/**/
+/* .filter-content > input::-webkit-slider-runnable-track { */
+/*   color: purple; */
+/* } */

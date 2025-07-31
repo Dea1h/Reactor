@@ -17,6 +17,9 @@ interface AnimatedProps {
 function Product() {
   const [pos, setPos] = useState<number>(0);
   const [index, setIndex] = useState<number>(0);
+  const [color, setColor] = useState<number>(0);
+  console.log(color);
+
 
   const spring = useSpring({
     right: `${pos}%`,
@@ -25,9 +28,11 @@ function Product() {
     },
   });
 
-  const handleChange = (direction: number, len: number) => {
+  const handleChange = (direction: number) => {
+    let len = data.length;
+
     if (direction == 0) {
-      if (index == -1) {
+      if (index == 0) {
         return;
       }
       let change: number = Math.floor(100 / len);
@@ -143,8 +148,9 @@ function Product() {
 
         setData(responseData);
 
+        console.log(responseData);
+
         console.log("HELLO");
-        console.log(data[0]);
       } catch (e: any) {
         try {
 
@@ -164,6 +170,8 @@ function Product() {
           let responseData = await response.json();
 
           setData(responseData);
+          console.log(responseData);
+
         } catch (e) {
           throw e;
         }
@@ -193,13 +201,13 @@ function Product() {
       <div className="product content">
         <button
           className="btn back"
-          onClick={() => handleChange(0, data.length)}
+          onClick={() => handleChange(0)}
         >
           <FontAwesomeIcon icon={faArrowLeft} />
         </button>
         <button
           className="btn forward"
-          onClick={() => handleChange(1, data.length)}
+          onClick={() => handleChange(1)}
         >
           <FontAwesomeIcon icon={faArrowRight} />
         </button>
@@ -212,7 +220,37 @@ function Product() {
           {group}
         </animated.div>
         <div className="product desc">
-          {data.length > 0 && <h1>{data[0].type}</h1>}
+          <div className="color selection">
+            {data.map((item, index) => {
+              console.log(item.colour);
+
+              return <span
+                key={index}
+                style={{ background: item.colour }}
+                onClick={() => setColor(index + 1)}
+                className={index + 1 === color ? "color selection selected" : "color selection unselected"}
+              >
+              </span>
+            })}
+            {/* <span */}
+            {/*   style={{ background: "black" }} */}
+            {/*   onClick={() => setColor("black")} */}
+            {/*   className={isSelected ? "color selection selected" : "color selection unselected"}> */}
+            {/* </span> */}
+            {/* <span */}
+            {/*   style={{ background: "blue" }} */}
+            {/*   onClick={() => setColor("blue")}> */}
+            {/* </span> */}
+            {/* <span */}
+            {/*   style={{ background: "red" }} */}
+            {/*   onClick={() => setColor("red")}> */}
+            {/* </span> */}
+          </div>
+          {/* {data.length > -1 */}
+          {/*   && <h1>{data[0].type.charAt(0).toUpperCase() + data[0].type.slice(1)}</h1> && */}
+          {/*   <h2>Price: {data[0].price}</h2> && */}
+          {/*   <h2>Stock: {data[0].stock}</h2> */}
+          {/* } */}
           <input
             type="number"
             className="quantity-in"

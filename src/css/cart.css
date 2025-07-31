@@ -7,6 +7,30 @@
 }
 
 .cart.content > h1 {
-  background-color: purple;
+  /* background-color: purple; */
   align-items: flex-start;
+}
+
+.checkout {
+  background-color: black;
+  color: white;
+  padding: 1.5rem 9rem 1.5rem 9rem;
+  font-size: 1.5rem;
+  font-weight: 500;
+  border-radius: 1rem;
+}
+
+.checkout:hover {
+  background-color: white;
+  color: black;
+  border: 1px solid black;
+}
+
+.cart.desc {
+  display: flex;
+  flex-direction: row;
+  gap: 0.8rem;
+  font-weight: 500;
+  font-size: 0.8rem;
+  border-bottom: 2px solid black;
 }

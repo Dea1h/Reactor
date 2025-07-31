@@ -5,6 +5,7 @@ import multer from "multer";
 import mysql from "mysql2/promise";
 import { type } from "os";
 import path from "path";
+import { forEachChild } from "typescript";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -193,6 +194,8 @@ class FetchParameter {
     image_id = null,
     stock_id = null,
     colour = null,
+    offset = 0,
+    limit = 50,
   } = {}) {
     this.type = type;
     this.product_id = product_id;
@@ -213,6 +216,8 @@ class FetchParameter {
     this.image_id = image_id;
     this.stock_id = stock_id;
     this.colour = colour;
+    this.limit = limit;
+    this.offset = offset;
   }
 }
 class PostParameter {
@@ -380,7 +385,8 @@ async function fetchDataTest(database, FetchParameter, pool) {
                             AND s.stock > 0
                             AND s.image_id = COALESCE(?, s.image_id)
                             AND s.stock_id = COALESCE(?, s.stock_id)
-                            AND s.colour = COALESCE(?, s.colour);
+                            AND s.colour = COALESCE(?, s.colour)
+                            LIMIT ? OFFSET ?;
                         `;
 
   try {
@@ -401,10 +407,11 @@ async function fetchDataTest(database, FetchParameter, pool) {
       FetchParameter.max_age,
       FetchParameter.size,
       FetchParameter.size_group,
-      FetchParameter.stock,
       FetchParameter.image_id,
       FetchParameter.stock_id,
       FetchParameter.colour,
+      FetchParameter.limit,
+      FetchParameter.offset,
     ]);
     console.log(
       pool.format(whereClause, [
@@ -423,10 +430,11 @@ async function fetchDataTest(database, FetchParameter, pool) {
         FetchParameter.max_age,
         FetchParameter.size,
         FetchParameter.size_group,
-        FetchParameter.stock,
         FetchParameter.image_id,
         FetchParameter.stock_id,
         FetchParameter.colour,
+        FetchParameter.limit,
+        FetchParameter.offset,
       ]),
     );
     return rows;
@@ -556,21 +564,31 @@ async function subQuery(database, pool, image_id) {
 function endpoints(express, pool, upload, database) {
   const endpoint = express.Router();
 
-  endpoint.get("/", async (req, res) => {
-    const indexHTML = "../dist/index.html";
-    res.sendFile(indexHTML);
-  });
+  // endpoint.get("/", (_, res) => {
+  //   const indexHTML = "../dist/index.html";
+  //   console.log("HELLO");
+  //   // const indexHTML = "/home/neon/PROJECTS/reactor/dist/index.html";
+  //   res.sendFile(indexHTML);
+  // });
 
   endpoint.get("/api/home", async (req, res) => {
+    console.log("/api/home HIT!");
     const parameter = new FetchParameter({
       date_added: 100,
+      limit: parseInt(req.query.limit),
+      offset: parseInt(req.query.offset),
     });
+    // let req_limit =
+    //   typeof req.query.limit === "string" ? parseInt(req.query.limit) : 50;
+    // let req_offset =
+    //   typeof req.query.offset === "string" ? parseInt(req.query.offset) : 1;
     const imageList = await fetchDataTest(database, parameter, pool);
     console.log(imageList);
     res.status(200).json(imageList);
   });
 
   endpoint.get("/api/search", async (req, res) => {
+    console.log("/api/search HIT!");
     const data = req.query.term
       ? `%${req.query.term.toLowerCase().replace(/[- ]/g, "")}%`
       : null;
@@ -583,6 +601,7 @@ function endpoints(express, pool, upload, database) {
   });
 
   endpoint.get("/api/filter", async (req, res) => {
+    console.log("/api/filter HIT!");
     const data = req.query || null;
     // const parameter = new FetchParameter({ priority: 0 });
     // const parameter = new fetchParameter({
@@ -606,6 +625,7 @@ function endpoints(express, pool, upload, database) {
     res.status(200).json(imageList);
   });
   endpoint.get("/api/shop", async (req, res) => {
+    console.log("/api/shop HIT!");
     console.log(req.query);
     // if (req.query.filter == true) {
     //   parameter = new FetchParameter({
@@ -665,18 +685,21 @@ function endpoints(express, pool, upload, database) {
       image_id: req.query.image_id,
       stock_id: req.query.stock_id,
       colour: req.query.colour,
+      limit: req.query.limit,
+      offset: req.query.offset,
     });
     console.log(parameter);
     const imageList = await fetchDataTest(database, parameter, pool);
-    console.log(imageList);
     res.status(200).json(imageList);
   });
   endpoint.get("/api/product", async (req, res) => {
+    console.log("/api/product HIT!");
     const model_id = req.query.model;
     let imageList = await subQuery(database, pool, model_id);
     res.status(200).json(imageList);
   });
-  endpoint.get("*", async (_, res) => {
+  endpoint.get("*", (_, res) => {
+    console.log("* HIT!");
     const indexHTML = "/home/neon/PROJECTS/reactor/dist/index.html";
     res.sendFile(indexHTML);
   });

@@ -1,57 +1,67 @@
-.icart.content > img {
-  width: 6rem;
-  height: 7rem;
-  object-fit: cover;
-  border: 1px solid black;
-}
-
-.icart.content > button {
-  border: none;
-  font-size: 1.5rem;
-  color: black;
-  background-color: white;
-}
+/* .icart.content > img { */
+/*   width: 6rem; */
+/*   height: 7rem; */
+/*   object-fit: cover; */
+/*   border: 1px solid black; */
+/* } */
+/**/
+/* .icart.content > button { */
+/*   border: none; */
+/*   font-size: 1.5rem; */
+/*   color: black; */
+/*   background-color: white; */
+/* } */
+/**/
+/* .icart.content { */
+/*   border-top: 1px solid black; */
+/*   display: grid; */
+/*   column-gap: 0.4rem; */
+/*   grid-template-columns: auto auto auto; */
+/*   grid-template-rows: auto auto auto; */
+/*   padding: 1rem 0 0.5rem 0; */
+/* } */
+/**/
+/* .icart.content > img { */
+/*   grid-column-start: 1; */
+/*   grid-column-end: 1; */
+/*   grid-row-start: 1; */
+/*   grid-row-end: 3; */
+/* } */
+/**/
+/* .icart.content h1:nth-child(0) { */
+/*   grid-column-start: 2; */
+/*   grid-column-end: 2; */
+/*   grid-row-start: 1; */
+/*   grid-row-end: 1; */
+/* } */
+/**/
+/* .icart.content h1:nth-child(1) { */
+/*   grid-column-start: 2; */
+/*   grid-column-end: 2; */
+/*   grid-row-start: 2; */
+/*   grid-row-end: 2; */
+/* } */
+/**/
+/* .icart.content h1:nth-child(2) { */
+/*   grid-column-start: 2; */
+/*   grid-column-end: 2; */
+/*   grid-row-start: 3; */
+/*   grid-row-end: 3; */
+/* } */
+/**/
+/* .icart.content > button { */
+/*   grid-column-start: 3; */
+/*   grid-column-end: 3; */
+/*   grid-row-start: 1; */
+/*   grid-row-end: 1; */
+/* } */
 
 .icart.content {
-  border-top: 1px solid black;
-  display: grid;
-  column-gap: 0.4rem;
-  grid-template-columns: auto auto auto;
-  grid-template-rows: auto auto auto;
-  padding: 1rem 0 0.5rem 0;
-}
-
-.icart.content > img {
-  grid-column-start: 1;
-  grid-column-end: 1;
-  grid-row-start: 1;
-  grid-row-end: 3;
-}
-
-.icart.content h1:nth-child(0) {
-  grid-column-start: 2;
-  grid-column-end: 2;
-  grid-row-start: 1;
-  grid-row-end: 1;
-}
-
-.icart.content h1:nth-child(1) {
-  grid-column-start: 2;
-  grid-column-end: 2;
-  grid-row-start: 2;
-  grid-row-end: 2;
-}
-
-.icart.content h1:nth-child(2) {
-  grid-column-start: 2;
-  grid-column-end: 2;
-  grid-row-start: 3;
-  grid-row-end: 3;
-}
-
-.icart.content > button {
-  grid-column-start: 3;
-  grid-column-end: 3;
-  grid-row-start: 1;
-  grid-row-end: 1;
+  display: flex;
+  flex-direction: row;
+  gap: 1.5rem;
+  /* border: 2px solid black; */
+  border-bottom: 2px solid black;
+  /* border-radius: 1rem; */
+  padding: 1rem 0.5rem 1rem 0.5rem;
 }
