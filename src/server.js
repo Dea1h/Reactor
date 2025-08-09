@@ -564,12 +564,12 @@ async function subQuery(database, pool, image_id) {
 function endpoints(express, pool, upload, database) {
   const endpoint = express.Router();
 
-  // endpoint.get("/", (_, res) => {
-  //   const indexHTML = "../dist/index.html";
-  //   console.log("HELLO");
-  //   // const indexHTML = "/home/neon/PROJECTS/reactor/dist/index.html";
-  //   res.sendFile(indexHTML);
-  // });
+  endpoint.get("/", (_, res) => {
+    const indexHTML = "../dist/index.html";
+    console.log("HELLO");
+    // const indexHTML = "/home/neon/PROJECTS/reactor/dist/index.html";
+    res.sendFile(indexHTML);
+  });
 
   endpoint.get("/api/home", async (req, res) => {
     console.log("/api/home HIT!");
@@ -666,27 +666,27 @@ function endpoints(express, pool, upload, database) {
     //       })
     //     : new FetchParameter({ date_added: 30 });
     const parameter = new FetchParameter({
-      type: req.query.type,
-      product_id: req.query.product_id,
-      season: req.query.season,
-      variant_id: req.query.variant_id,
-      variant_name: req.query.variant_name,
-      design_id: req.query.design_id,
-      design_name: req.query.design_name,
-      date_added: 100,
-      gender: req.query.gender,
-      min_price: req.query.minPrice,
-      max_price: req.query.maxPrice,
-      min_age: req.query.minAge,
-      max_age: req.query.maxAge,
-      size_group: req.query.size,
+      type: req.query.type || null,
+      product_id: req.query.product_id || null,
+      season: req.query.season || null,
+      variant_id: req.query.variant_id || null,
+      variant_name: req.query.variant_name || null,
+      design_id: req.query.design_id || null,
+      design_name: req.query.design_name || null,
+      date_added: 100 || null,
+      gender: req.query.gender || null,
+      min_price: req.query.minPrice || null,
+      max_price: req.query.maxPrice || null,
+      min_age: req.query.minAge || null,
+      max_age: req.query.maxAge || null,
+      size_group: req.query.size || null,
       // size_group: req.query.size_group,
-      stock: req.query.stock,
-      image_id: req.query.image_id,
-      stock_id: req.query.stock_id,
-      colour: req.query.colour,
-      limit: req.query.limit,
-      offset: req.query.offset,
+      stock: req.query.stock || null,
+      image_id: req.query.image_id || null,
+      stock_id: req.query.stock_id || null,
+      colour: req.query.colour || null,
+      limit: req.query.limit || 50,
+      offset: req.query.offset | 0,
     });
     console.log(parameter);
     const imageList = await fetchDataTest(database, parameter, pool);

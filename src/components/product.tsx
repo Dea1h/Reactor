@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { useLocation } from "react-router-dom";
 import { useSpring, animated, SpringValue } from "@react-spring/web";
+import Notification from "./notification";
 
 interface AnimatedProps {
   style: {
@@ -18,6 +19,10 @@ function Product() {
   const [pos, setPos] = useState<number>(0);
   const [index, setIndex] = useState<number>(0);
   const [color, setColor] = useState<number>(0);
+  //@ts-ignore
+  const [notificationText, setText] = useState<string>("HELLO");
+  const [isNoti, setNoti] = useState<boolean>(false)
+
   console.log(color);
 
 
@@ -181,19 +186,22 @@ function Product() {
   }, [state]);
 
 
-  // const handleProduct = (product: { id: string, stock: number, type: string, price: number, size_group: string, }) => {
-  //   let cart = JSON.parse(localStorage.getItem('cart') || []);
-  //
-  //   let existIndex = cart.findIndex((item: any) => item.id === product.id);
-  //
-  //   if (existIndex !== -1) {
-  //     cart[existIndex].stock += product.stock;
-  //   } else {
-  //     cart.push(product);
-  //   }
-  //
-  //   localStorage.setItem('cart', JSON.stringify(cart));
-  // };
+  const handleProduct = (isNoti: boolean/*product: { id: string, stock: number, type: string, price: number, size_group: string, }*/) => {
+
+
+    // let cart: any = JSON.parse(localStorage.getItem('cart') || []);
+    //
+    // let existIndex = cart.findIndex((item: any) => item.id === product.id);
+    //
+    // if (existIndex !== -1) {
+    //   cart[existIndex].stock += product.stock;
+    // } else {
+    //   cart.push(product);
+    // }
+    //
+    // localStorage.setItem('cart', JSON.stringify(cart));
+    setNoti(!isNoti)
+  };
 
   return (
     <React.Fragment>
@@ -266,6 +274,12 @@ function Product() {
           </select>
           {size}
         </div>
+        <button className="cart-btn" onClick={() => handleProduct(isNoti)}>
+          Add To Cart
+        </button>
+      </div>
+      <div className="notifcation container">
+        <Notification notiText={notificationText} isNotified={isNoti} />
       </div>
     </React.Fragment>
   );

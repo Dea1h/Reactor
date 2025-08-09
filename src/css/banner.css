@@ -3,20 +3,32 @@
   background-size: cover;
   background-position: center;
   width: 100%;
-  width: 6rem;
-  height: 15rem;
+  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  position: relative;
   border-radius: 1rem;
-  /* transition: transition 0.5s linear; */
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.banner::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("/images/gradient.jpg");
+  background-size: cover;
+  background-position: center;
+  z-index: -1; /* Places behind content */
 }
 
 .banner > h2 {
   padding: 1.5rem;
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+  position: relative;
 }
-
-/* .banner:hover { */
-/*   transform: scale(1.5); */
-/* } */

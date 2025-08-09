@@ -14,9 +14,20 @@
 
 .banner.display {
   display: flex;
-  flex-direction: row;
-  gap: 1rem;
-  margin-left: 8rem;
-  margin-top: 2rem;
-  margin-bottom: 5rem;
+  gap: 2rem;
+  justify-content: center;
+  margin: 1rem 0;
+  background-color: transparent;
 }
+
+.banner.container {
+  width: 6rem;
+  height: 15rem;
+  position: relative;
+  background-color: transparent;
+  border: 3px solid transparent;
+}
+
+/* * { */
+/*   border: 3px solid red !important; */
+/* } */

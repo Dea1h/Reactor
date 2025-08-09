@@ -3,9 +3,10 @@ import Navbar from './navbar';
 
 import ICard from './icard';
 import "../css/home.css";
+//@ts-ignore
 import Banner from './banner';
 import { useFilterContext } from './context';
-import { useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 function Home() {
   const { filters, setFilters } = useFilterContext();
@@ -31,6 +32,7 @@ function Home() {
       `http://192.168.1.76:8080/api/home?limit=50&offset=${clusterValue * 50}`
     ];
     for (const url of endpoints) {
+
       try {
         const response = await fetch(url, {
           method: 'GET',
@@ -61,9 +63,19 @@ function Home() {
     for (let i = 0; i < data.length; i = i + 2) {
       group.push(
         <div key={`${i} - ${data[i].image_id}`} className='home group'>
-          <ICard className='icard' img={data[i].image_id} type={data[i].image_id} />
+          <NavLink
+            to={'/product'}
+            key={data[i].image_id}
+            state={{ model_id: data[i].image_id }}>
+            <ICard className='icard' img={data[i].image_id} type={data[i].image_id} />
+          </NavLink>
           {data[i + 1] && (
-            <ICard className='icard' img={data[i + 1].image_id} type={data[i + 1].image_id} />
+            <NavLink
+              key={data[i].iamge_id}
+              to={'/product'}
+              state={{ model_id: data[i].image_id }} >
+              <ICard className='icard' img={data[i + 1].image_id} type={data[i + 1].image_id} />
+            </NavLink>
           )}
         </div>
       );
@@ -147,13 +159,14 @@ function Home() {
 
     setFilters(nullOutObject(filters));
     fetchData(0);
-    // window.addEventListener("scroll", handlePage, { passive: true });
+    // window.addEventListener("scroll", handlePage, {passive: true });
     // return () => {
     //   window.removeEventListener("scroll", handlePage);
     // }
 
   }, []);
 
+  //@ts-ignore
   const handleBanner = (index: number) => {
     const genderMap = { 0: "M", 1: "U", 2: "F" } as const;
     setFilters({
@@ -168,9 +181,13 @@ function Home() {
       <Navbar />
       <div className='banner display'>
         {['Boy', 'Mixed', 'Girl'].map((text, index) => (
-          <span key={text} onClick={() => handleBanner(index)}>
+          <div
+            className='banner container'
+            key={text}
+            onClick={() => handleBanner(index)}
+          >
             <Banner bannerText={text} />
-          </span>
+          </div>
         ))}
       </div>
       <div className='home display'>

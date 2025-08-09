@@ -10,7 +10,6 @@ function Banner({ bannerText }: Props) {
     <React.Fragment>
       <div className="banner">
         <h2>{bannerText}</h2>
-        {/* <img src={"/images/" + bannerImage} /> */}
       </div>
     </React.Fragment>
   );
