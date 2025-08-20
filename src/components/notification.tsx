@@ -26,8 +26,7 @@ function Notification({ notiText, isNotified }: notficationProps) {
       <animated.div
         {...{ style: slideAnimation, className: "notification" }}
       >
-        <p className="notfication-text"
-        >{notiText}</p>
+        <p>{notiText}</p>
       </animated.div>
     </React.Fragment>
   );

@@ -1,5 +1,7 @@
 import React, {
+  RefObject,
   useEffect,
+  useRef,
   useState
 } from 'react';
 
@@ -27,7 +29,7 @@ import '../css/shop.css';
 //   filter?: boolean | null;
 // }
 
-interface filterSettings {
+interface FilterTypes {
   maxPrice?: number | null;
   minPrice?: number | null;
   minAge?: number | null;
@@ -42,7 +44,8 @@ function Shop() {
   const [open, setOpen] = useState(false);
   const [data, setData] = useState<any[]>([]);
   const { filters, setFilters: _ } = useFilterContext();
-  // const [filters, setFilters] = useState<filterSettings>({
+  const isloading: RefObject<boolean> = useRef(false)
+  // const [filters, setFilters] = useState<FilterTypes>({
   //   maxPrice: null,
   //   minPrice: null,
   //   minAge: null,
@@ -51,7 +54,7 @@ function Shop() {
   //   gender: null,
   //   size: null,
   // });
-  // const _URLbuilder = (filters: filterSettings, baseURL: string) => {
+  // const _URLbuilder = (filters: FilterTypes, baseURL: string) => {
   //   const params = new URLSearchParams({
   //     maxPrice: String(filters.maxPrice),
   //     minPrice: String(filters.minPrice),
@@ -80,19 +83,80 @@ function Shop() {
 
   // const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
   /* Function To Fetch Image Data and Associated Product Data from Express Backend. */
-  const fetchData = async (filters: filterSettings) => {
+  // const fetchData = async (filters: FilterTypes) => {
+  //   try {
+  //
+  //     setOpen(false);
+  //
+  //     // const url: string = `http://localhost:8080/api/shop?minPrice=${filters?.minPrice}&maxPrice=${filters?.maxPrice}&minAge=${filters?.minAge}&maxAge=${filters?.maxAge}&gender=${filters?.gender}&colour=${filters?.colour}&size_group=${filters?.size}`;
+  //     console.log(filters);
+  //
+  //     const url: string = _URLbuilder("http://localhost:8080/api/shop", filters);
+  //     console.log(url);
+  //
+  //
+  //
+  //     const resposne = await fetch(url, {
+  //       method: 'GET',
+  //       headers: {
+  //         'Content-Type': 'application/json'
+  //       },
+  //     });
+  //
+  //     if (!resposne.ok) {
+  //       throw new Error(`Response Status: ${resposne.status} `);
+  //     }
+  //
+  //     const responseData = await resposne.json();
+  //
+  //
+  //     console.log(responseData);
+  //     setData(responseData);
+  //
+  //   } catch (e) {
+  //     try {
+  //       setOpen(false);
+  //
+  //       const url: string = `http://192.168.1.76:8080/api/shop?minPrice=${filters?.minPrice}&maxPrice=${filters?.maxPrice}&minAge=${filters?.minAge}&maxAge=${filters?.maxAge}&gender=${filters?.gender}&colour=${filters?.colour}&size_group=${filters?.size}`;
+  //
+  //
+  //       const resposne = await fetch(url, {
+  //         method: 'GET',
+  //         headers: {
+  //           'Content-Type': 'application/json'
+  //         },
+  //       });
+  //
+  //       if (!resposne.ok) {
+  //         throw new Error(`Response Status: ${resposne.status} `);
+  //       }
+  //
+  //       const responseData = await resposne.json();
+  //
+  //
+  //       console.log(responseData);
+  //       setData(responseData);
+  //     } catch (e) {
+  //       if (e instanceof TypeError) {
+  //         console.error("TypeError In Fetch Function In Shop.tsx", e.message);
+  //       } else if (e instanceof SyntaxError) {
+  //         console.error("SyntaxError In Fetch Function In Shop.tsx", e.message);
+  //       }
+  //     }
+  //   }
+  // }
+
+  const fetchData = async (filters: FilterTypes) => {
+    if (isloading.current) return;
+    isloading.current = true;
+
+    let url: string = "";
+    if (window.location.hostname === "localhost") {
+      url = _URLbuilder("http://localhost:8080/api/shop", filters);
+    } else {
+      url = _URLbuilder("http://192.168.1.76:8080/api/shop", filters);
+    }
     try {
-
-      setOpen(false);
-
-      // const url: string = `http://localhost:8080/api/shop?minPrice=${filters?.minPrice}&maxPrice=${filters?.maxPrice}&minAge=${filters?.minAge}&maxAge=${filters?.maxAge}&gender=${filters?.gender}&colour=${filters?.colour}&size_group=${filters?.size}`;
-      console.log(filters);
-
-      const url: string = _URLbuilder("http://localhost:8080/api/shop", filters);
-      console.log(url);
-
-
-
       const resposne = await fetch(url, {
         method: 'GET',
         headers: {
@@ -111,38 +175,10 @@ function Shop() {
       setData(responseData);
 
     } catch (e) {
-      try {
-        setOpen(false);
-
-        const url: string = `http://192.168.1.76:8080/api/shop?minPrice=${filters?.minPrice}&maxPrice=${filters?.maxPrice}&minAge=${filters?.minAge}&maxAge=${filters?.maxAge}&gender=${filters?.gender}&colour=${filters?.colour}&size_group=${filters?.size}`;
-
-
-        const resposne = await fetch(url, {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-        });
-
-        if (!resposne.ok) {
-          throw new Error(`Response Status: ${resposne.status} `);
-        }
-
-        const responseData = await resposne.json();
-
-
-        console.log(responseData);
-        setData(responseData);
-      } catch (e) {
-        if (e instanceof TypeError) {
-          console.error("TypeError In Fetch Function In Shop.tsx", e.message);
-        } else if (e instanceof SyntaxError) {
-          console.error("SyntaxError In Fetch Function In Shop.tsx", e.message);
-        }
-      }
+      throw e;
     }
-  }
 
+  }
   useEffect(() => {
     // if (location.state != null) {
     //

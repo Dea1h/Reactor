@@ -1,0 +1,23 @@
+.vat-bill-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  align-items: center;
+}
+
+.vat-bill-container > input {
+  padding: 1rem 1rem;
+  width: 90%;
+  font-size: 1rem;
+  border: 1px solid black;
+  border-radius: 0.5rem;
+}
+
+.vat-bill-container > button {
+  padding: 1rem;
+  background-color: black;
+  color: white;
+  border-radius: 0.5rem;
+  width: 90%;
+  font-size: 1rem;
+}

@@ -7,7 +7,7 @@ import { useLocation } from "react-router-dom";
 import { useSpring, animated, SpringValue } from "@react-spring/web";
 import Notification from "./notification";
 
-interface AnimatedProps {
+interface AnimatedTypes {
   style: {
     right: SpringValue<string>;
   };
@@ -15,16 +15,32 @@ interface AnimatedProps {
   children?: React.ReactNode;
 }
 
+interface ProductTypes {
+  colour: string,
+  design_name: string,
+  gender: string,
+  max_age: number,
+  min_age: number,
+  price: number,
+  product_id: number,
+  season: string,
+  size: string,
+  size_group: string,
+  stock: number,
+  type: string,
+  image_id: string,
+  data_added: string,
+  variant_name: string,
+}
+
 function Product() {
   const [pos, setPos] = useState<number>(0);
   const [index, setIndex] = useState<number>(0);
-  const [color, setColor] = useState<number>(0);
-  //@ts-ignore
-  const [notificationText, setText] = useState<string>("HELLO");
-  const [isNoti, setNoti] = useState<boolean>(false)
-
-  console.log(color);
-
+  const [colorIndex, setColorIndex] = useState<number>(0);
+  const [sizeIndex, setSizeIndex] = useState<number>(0);
+  const [designIndex, setDesignIndex] = useState<number>(0);
+  const [notificationText, setText] = useState<string>("");
+  const [isNoti, setNoti] = useState<boolean>(false);
 
   const spring = useSpring({
     right: `${pos}%`,
@@ -53,66 +69,14 @@ function Product() {
     }
   };
 
-  const [quant, setQuant] = useState<number>(1);
+  const [quant, setQuant] = useState<string>("1");
   // const [color, setColor] = useState<string>("Blue");
   // const [size, setSize] = useState<string>("M");
-  const [data, setData] = useState<any[]>([]);
+  const [data, setData] = useState<ProductTypes[]>([]);
 
   const location = useLocation();
 
   let state = location.state;
-
-  // const Fetchdate = async (
-  //   state: any,
-  //   setData: React.Dispatch<React.SetStateAction<any[]>>,
-  // ) => {
-  //   try {
-  //     let url: string = `http://localhost:8080/api/product?model=${state.model_id}`;
-  //     console.log(url);
-  //
-  //     let response: Response = await fetch(url, {
-  //       method: "GET",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-  //
-  //     if (!response.ok) {
-  //       throw new Error(`Reponse Failed: Status:${response.status}`);
-  //     }
-  //
-  //     let responseData = await response.json();
-  //
-  //
-  //     setData(responseData);
-  //
-  //     console.log("HELLO");
-  //     console.log(data[0]);
-  //   } catch (e: any) {
-  //     try {
-  //
-  //       let url: string = `http://192.168.1.76:8080/api/product?model=${state.model_id}`;
-  //
-  //       let response: Response = await fetch(url, {
-  //         method: "GET",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //       });
-  //
-  //       if (!response.ok) {
-  //         throw new Error(`Reponse Failed: Status:${response.status}`);
-  //       }
-  //
-  //       let responseData = await response.json();
-  //
-  //       setData(responseData);
-  //     } catch (e) {
-  //       throw e;
-  //     }
-  //   }
-  // };
-
 
   let colour_option: React.ReactNode[] = [];
   let size_option: React.ReactNode[] = [];
@@ -125,87 +89,107 @@ function Product() {
     size.push(<h1>{data[i].size}</h1>);
   }
 
-  useEffect(() => {
-    if (location.state == null) {
-      console.log("ERROR LOCATED");
-    }
-    const Fetchdate = async (
-      state: any,
-      setData: React.Dispatch<React.SetStateAction<any[]>>,
-    ) => {
-      try {
-        let url: string = `http://localhost:8080/api/product?model=${state.model_id}`;
-        console.log(url);
+  const Fetchdata = async (
+    state: any,
+    setData: React.Dispatch<React.SetStateAction<any[]>>,
+  ) => {
+    const endpoints = [
+      `http://localhost:8080/api/product?model=${state.model_id}`,
+      `http://192.168.1.76:8080/api/product?model=${state.model_id}`
+    ];
 
-        let response: Response = await fetch(url, {
+    for (const endpoint of endpoints) {
+      try {
+        const response = await fetch(endpoint, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
           },
         });
 
-        if (!response.ok) {
-          throw new Error(`Reponse Failed: Status:${response.status}`);
-        }
+        if (!response.ok)
+          throw "Error While Fetching In Product";
 
-        let responseData = await response.json();
-
-
-        setData(responseData);
-
-        console.log(responseData);
-
-        console.log("HELLO");
+        setData(await response.json());
+        return;
       } catch (e: any) {
-        try {
-
-          let url: string = `http://192.168.1.76:8080/api/product?model=${state.model_id}`;
-
-          let response: Response = await fetch(url, {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          });
-
-          if (!response.ok) {
-            throw new Error(`Reponse Failed: Status:${response.status}`);
-          }
-
-          let responseData = await response.json();
-
-          setData(responseData);
-          console.log(responseData);
-
-        } catch (e) {
-          throw e;
-        }
+        console.error(e.message);
       }
-    };
-    Fetchdate(state, setData);
+    }
+  }
+
+  useEffect(() => {
+    if (location.state == null) {
+      console.log("ERROR LOCATED");
+    }
+    Fetchdata(state, setData);
   }, [state]);
 
+  useEffect(() => {
+    console.log(data);
+    if (data.length > 0)
+      setText(data[0].type.charAt(0).toUpperCase() + data[0].type.slice(1) + " has been added to cart");
+  }, [data]);
 
-  const handleProduct = (isNoti: boolean/*product: { id: string, stock: number, type: string, price: number, size_group: string, }*/) => {
 
+  //@ts-ignore
+  const handleProduct = async (
+    quantity: number,
+    color: string,
+    design: string,
+    size_group: string,
+    product_id: number,
+    type: string,
+    model_id: string,
+    price: number
+  ) => {
+    const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-    // let cart: any = JSON.parse(localStorage.getItem('cart') || []);
-    //
-    // let existIndex = cart.findIndex((item: any) => item.id === product.id);
-    //
-    // if (existIndex !== -1) {
-    //   cart[existIndex].stock += product.stock;
-    // } else {
-    //   cart.push(product);
-    // }
-    //
-    // localStorage.setItem('cart', JSON.stringify(cart));
-    setNoti(!isNoti)
+    try {
+
+      let cartjson = localStorage.getItem('cart');
+      let cart: any;
+      try {
+        const parsed = cartjson ? JSON.parse(cartjson) : [];
+        cart = Array.isArray(parsed) ? parsed : [];
+
+      } catch (e) {
+        cart = [];
+      }
+      const product = {
+        quantity: quantity,
+        color: color,
+        design: design,
+        size_group: size_group,
+        id: product_id,
+        type: type,
+        model_id: model_id,
+        price: price,
+      };
+
+      let existIndex = cart.findIndex((item: any) => item.id === product.id);
+      if (existIndex !== -1)
+        cart[existIndex].quantity += product.quantity;
+      else
+        cart.push(product);
+
+      localStorage.setItem('cart', JSON.stringify(cart));
+      setNoti(true);
+
+      await sleep(1000);
+      setNoti(false);
+    } catch (e: any) {
+      console.error("Bad Things happend in handleProduct.Hide Now " + e.message);
+      setNoti(true);
+      await sleep(1000);
+      setNoti(false);
+    }
   };
 
   return (
     <React.Fragment>
       <Navbar />
+      <Notification notiText={notificationText} isNotified={isNoti} />
       <div className="product content">
         <button
           className="btn back"
@@ -223,63 +207,70 @@ function Product() {
           {...({
             style: spring,
             className: "img container",
-          } as AnimatedProps)}
+          } as AnimatedTypes)}
         >
           {group}
         </animated.div>
         <div className="product desc">
+          <h2>Price: {data.length > 0 && data[0].price} </h2>
           <div className="color selection">
             {data.map((item, index) => {
-              console.log(item.colour);
 
+              console.log(index);
               return <span
                 key={index}
                 style={{ background: item.colour }}
-                onClick={() => setColor(index + 1)}
-                className={index + 1 === color ? "color selection selected" : "color selection unselected"}
+                onClick={() => setColorIndex(index)}
+                className={colorIndex === index ? "color selection selected" : ""}
               >
               </span>
             })}
-            {/* <span */}
-            {/*   style={{ background: "black" }} */}
-            {/*   onClick={() => setColor("black")} */}
-            {/*   className={isSelected ? "color selection selected" : "color selection unselected"}> */}
-            {/* </span> */}
-            {/* <span */}
-            {/*   style={{ background: "blue" }} */}
-            {/*   onClick={() => setColor("blue")}> */}
-            {/* </span> */}
-            {/* <span */}
-            {/*   style={{ background: "red" }} */}
-            {/*   onClick={() => setColor("red")}> */}
-            {/* </span> */}
           </div>
-          {/* {data.length > -1 */}
-          {/*   && <h1>{data[0].type.charAt(0).toUpperCase() + data[0].type.slice(1)}</h1> && */}
-          {/*   <h2>Price: {data[0].price}</h2> && */}
-          {/*   <h2>Stock: {data[0].stock}</h2> */}
-          {/* } */}
+          <h2>Size Groups Available:</h2>
+          <div className="size selection">
+            {
+              data.map((item, index) => {
+                return (
+                  <span
+                    key={index}
+                    onClick={() => setSizeIndex(index)}
+                    className={sizeIndex === index ? "size selection selected" : ""}
+                  >{item.size_group}
+                  </span>
+                )
+              })
+            }
+          </div>
+          <h2> Design Selection:</h2>
+          <div className="design selection">
+            {
+              data.map((item, index) => {
+                return (
+                  <img
+                    key={index}
+                    onClick={() => setDesignIndex(index)}
+                    className={designIndex === index ? "design selection selected" : ""}
+                    src={`/images/${item.image_id}`}
+                    alt={`Design ${index}`
+                    }
+                  />
+                );
+              })
+            }
+          </div>
           <input
             type="number"
             className="quantity-in"
             value={quant}
-            min={1}
-            onChange={(e) => setQuant(Number(e.target.value))}
+            min={0}
+            onChange={(e) => setQuant(e.target.value)}
           />
-          <select name="colour" className="colour">
-            {colour_option}
-          </select>
-          <select name="size_group" className="size_group">
-            {size_option}
-          </select>
+          <h2>Available Sizes:</h2>
           {size}
+          <button className="cart-btn" onClick={() => handleProduct(Number(quant), data[colorIndex].colour, data[designIndex].design_name, data[sizeIndex].size_group, data[designIndex].product_id, data[designIndex].type, data[designIndex].image_id, data[designIndex].price)}>
+            Add To Cart
+          </button>
         </div>
-        <button className="cart-btn" onClick={() => handleProduct(isNoti)}>
-          Add To Cart
-        </button>
-      </div>
-      <div className="notifcation container">
-        <Notification notiText={notificationText} isNotified={isNoti} />
       </div>
     </React.Fragment>
   );

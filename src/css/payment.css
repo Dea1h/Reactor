@@ -4,3 +4,10 @@
   justify-content: center;
   align-items: center;
 }
+
+.payment > input {
+  color: white;
+  background-color: black;
+  padding: 1rem;
+  width: 90%;
+}

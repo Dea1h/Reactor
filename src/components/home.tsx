@@ -4,9 +4,10 @@ import Navbar from './navbar';
 import ICard from './icard';
 import "../css/home.css";
 //@ts-ignore
-import Banner from './banner';
+// import Banner from './banner';
 import { useFilterContext } from './context';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
+import BannerCombined from './bannerCombined';
 
 function Home() {
   const { filters, setFilters } = useFilterContext();
@@ -20,16 +21,16 @@ function Home() {
 
   const [groupedItems, setGroupedItems] = useState<React.ReactNode[]>([]);
 
-  const navigate = useNavigate();
 
-
-  const fetchData = useCallback(async (clusterValue: number) => {
+  const fetchData = useCallback(async () => {
     if (isLoading.current) return;
     isLoading.current = true;
 
     const endpoints = [
-      `http://localhost:8080/api/home?limit=${50}&offset=${clusterValue * 50}`,
-      `http://192.168.1.76:8080/api/home?limit=50&offset=${clusterValue * 50}`
+      `http://localhost:8080/api/home`,
+      `http://192.168.1.76:8080/api/home`
+      // `http://localhost:8080/api/home?limit=${50}&offset=${clusterValue * 50}`,
+      // `http://192.168.1.76:8080/api/home?limit=50&offset=${clusterValue * 50}`
     ];
     for (const url of endpoints) {
 
@@ -48,7 +49,7 @@ function Home() {
         isLoading.current = false;
         return;
       } catch (e) {
-        throw e;
+        console.warn(`Failed: ${url}`, e);
       } finally {
         isLoading.current = false;
       }
@@ -158,7 +159,7 @@ function Home() {
     console.log("In useEffct");
 
     setFilters(nullOutObject(filters));
-    fetchData(0);
+    fetchData();
     // window.addEventListener("scroll", handlePage, {passive: true });
     // return () => {
     //   window.removeEventListener("scroll", handlePage);
@@ -166,30 +167,10 @@ function Home() {
 
   }, []);
 
-  //@ts-ignore
-  const handleBanner = (index: number) => {
-    const genderMap = { 0: "M", 1: "U", 2: "F" } as const;
-    setFilters({
-      ...filters,
-      gender: genderMap[index as keyof typeof genderMap],
-    });
-    navigate('/shop');
-  };
-
   return (
     <React.Fragment>
       <Navbar />
-      <div className='banner display'>
-        {['Boy', 'Mixed', 'Girl'].map((text, index) => (
-          <div
-            className='banner container'
-            key={text}
-            onClick={() => handleBanner(index)}
-          >
-            <Banner bannerText={text} />
-          </div>
-        ))}
-      </div>
+      <BannerCombined />
       <div className='home display'>
         {groupedItems}
       </div>

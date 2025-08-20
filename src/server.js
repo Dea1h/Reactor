@@ -1,11 +1,8 @@
-import { log } from "console";
 import express from "express";
 import fs from "fs";
 import multer from "multer";
 import mysql from "mysql2/promise";
-import { type } from "os";
 import path from "path";
-import { forEachChild } from "typescript";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -162,7 +159,26 @@ async function initializeDatabase(database, pool) {
         image_id text not null,
         price int not NULL
         );
-        COMMIT;
+      CREATE TABLE orders (
+      order_id int primary key auto_increment,
+      total_quantity INT NOT NULL,
+      hasPayed BOOLEAN,
+      payed_amount INT,
+      total_amount INT NOT NULL,
+      completed BOOLEAN
+        );
+      CREATE TABLE order_items (
+      order_id_item int primary key auto_increment,
+      order_id INT NOT NULL,
+      quantity INT NOT NULL,
+      price INT NOT NULL,
+      color TEXT NOT NULL,
+      design TEXT NOT NULL,
+      size_group TEXT NOT NULL,
+      FOREIGN KEY (order_id) REFERENCES orders(order_id)
+      ON DELETE CASCADE
+        );
+      COMMIT;
       ;`;
       await pool.query(query);
       console.log("Database Created.");
@@ -220,6 +236,7 @@ class FetchParameter {
     this.offset = offset;
   }
 }
+
 class PostParameter {
   constructor({
     type,
@@ -385,8 +402,7 @@ async function fetchDataTest(database, FetchParameter, pool) {
                             AND s.stock > 0
                             AND s.image_id = COALESCE(?, s.image_id)
                             AND s.stock_id = COALESCE(?, s.stock_id)
-                            AND s.colour = COALESCE(?, s.colour)
-                            LIMIT ? OFFSET ?;
+                            AND s.colour = COALESCE(?, s.colour);
                         `;
 
   try {
@@ -444,7 +460,30 @@ async function fetchDataTest(database, FetchParameter, pool) {
   }
 }
 
-async function subQuery(database, pool, image_id) {
+async function orderQuery(database, pool) {
+  let whereClause = "SELECT * FROM order WHERE completed = FALSE;";
+
+  try {
+    await pool.query(`USE ${database};`);
+    const [rows] = await pool.query(whereClause);
+    return rows;
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+async function orderQueryID(database, pool, order_id) {
+  let whereClause = `SELECT * FORM order_items WHERE order_id = ?;`;
+
+  try {
+    await pool.query(`USE ?;`, [database]);
+    const rows = await pool.query(whereClause, [order_id]);
+    return rows;
+  } catch (e) {
+    console.error(e);
+  }
+}
+async function subQuery(pool, image_id) {
   let query = `
                       SELECT 
                           p.type,
@@ -479,11 +518,56 @@ async function subQuery(database, pool, image_id) {
                           );
                     `;
   try {
-    await pool.query(`USE ${database};`);
     const [rows, fields] = await pool.query(query, [image_id]);
     return rows;
   } catch (error) {
     throw new Error(`Error Subquery.${error}`);
+  }
+}
+
+async function insertOrder(pool, order) {
+  let whereClause = `INSERT INTO order (
+                          order_id,
+                          total_quantity,
+                          price,
+                          hasPayed,
+                          payed_amount,
+                          total_amount,
+                          completed,
+                          ) VALUES (
+                          ?,?,?,?,?,?,?);
+                          `;
+  try {
+    const [rows, fields] = await pool.query(whereClause, []);
+  } catch (e) {
+    console.error("Inserting Order Failed");
+  }
+}
+
+async function insertOrderItem(pool, order, order_id) {
+  let whereClause = `INSERT INTO ;
+       order_items (
+      order_id_item,
+      order_id,
+      quantity,
+      price,
+      color,
+      type,
+      design,
+      size_group,)
+      VALUES (?,?,?,?,?,?,?,?);`;
+
+  try {
+    await pool.query(pool, [
+      order.quantity,
+      order.price,
+      order.color,
+      order.type,
+      order.design,
+      order.size_group,
+    ]);
+  } catch (e) {
+    console.error("Error Inserting Items In Table:");
   }
 }
 
@@ -561,13 +645,11 @@ async function subQuery(database, pool, image_id) {
 //   }
 // }
 //
-function endpoints(express, pool, upload, database) {
+function endpoints(express, pool, _upload, database) {
   const endpoint = express.Router();
 
   endpoint.get("/", (_, res) => {
     const indexHTML = "../dist/index.html";
-    console.log("HELLO");
-    // const indexHTML = "/home/neon/PROJECTS/reactor/dist/index.html";
     res.sendFile(indexHTML);
   });
 
@@ -695,8 +777,39 @@ function endpoints(express, pool, upload, database) {
   endpoint.get("/api/product", async (req, res) => {
     console.log("/api/product HIT!");
     const model_id = req.query.model;
-    let imageList = await subQuery(database, pool, model_id);
+    let imageList = await subQuery(pool, model_id);
     res.status(200).json(imageList);
+  });
+
+  endpoint.get("/order/getOrder", async (_, res) => {
+    const orderInfo = orderQuery(database, pool);
+    console.log(orderInfo);
+    res.status(200).json(orderInfo);
+  });
+
+  endpoint.post("/order/postOrder", async (req, res) => {
+    const orders = req.body;
+    let total_quantity = 0;
+    let total_price = 0;
+    for (const order of orders) {
+      total_quantity += order.quantity;
+      total_price += order.price;
+    }
+    await insertOrder(pool, {
+      total_quantity: total_quantity,
+      total_amount: total_price,
+    });
+
+    for (const order of orders) {
+      await insertOrderItem(pool, order);
+    }
+    return res.status(200).json({ message: "Order Placed Successfully" });
+  });
+
+  endpoint.get("/orderID", async (req, res) => {
+    const order_id = req.query.order_id;
+    const itemInfo = await orderQueryID(database, pool, order_id);
+    res.status(200).json(itemInfo);
   });
   endpoint.get("*", (_, res) => {
     console.log("* HIT!");
@@ -719,6 +832,7 @@ function endpoints(express, pool, upload, database) {
       waitForConnections: true,
       connectionLimit: 10,
       multipleStatements: true,
+      database: database,
     });
   } catch (error) {
     console.error(error);
